@@ -16,10 +16,10 @@ import webappImg from "@/assets/feature-webapp.jpg";
 import reportsImg from "@/assets/feature-reports.jpg";
 
 export const metadata = {
-  title: "Solutions — TaskTracker24 for CA & Accounting Firms",
+  title: "Solutions — StudyCafe for CA & Accounting Firms",
   description: "Purpose-built solutions for multi-entity CA firms, small teams, and growing practices. Automate billing, workflow, and client follow-up.",
   openGraph: {
-    title: "Solutions — TaskTracker24",
+    title: "Solutions — StudyCafe",
     description: "Solutions purpose-built for modern CA & accounting firms of every size.",
   },
 };
@@ -49,7 +49,7 @@ const blocks = [
   {
     eyebrow: "Automated Compliance",
     title: "Compliance that schedules itself.",
-    body: "Pick the filings each client needs once. TaskTracker24 spins up the right task on the right cadence — GST, TDS, ROC, Income Tax — and assigns it to the right associate.",
+    body: "Pick the filings each client needs once. StudyCafe spins up the right task on the right cadence — GST, TDS, ROC, Income Tax — and assigns it to the right associate.",
     img: tasksImg,
     bullets: ["47+ pre-built filing templates", "Auto-assignment by skill & load", "Government calendar synced"],
   },
@@ -70,14 +70,14 @@ const blocks = [
   {
     eyebrow: "Useful Tools, Built In",
     title: "The little utilities your team Googles every day.",
-    body: "GST calculators, TDS rate finders, mileage logs, and a built-in IT-return checklist — all inside TaskTracker24, all linked to the right client record.",
+    body: "GST calculators, TDS rate finders, mileage logs, and a built-in IT-return checklist — all inside StudyCafe, all linked to the right client record.",
     img: webappImg,
     bullets: ["GST, TDS & advance tax calculators", "Client-linked time & mileage logs", "Pre-flight return checklists"],
   },
   {
     eyebrow: "Payment Reminders",
     title: "Receivables that collect themselves.",
-    body: "Configure the cadence once — a soft nudge on day three, a firm reminder on day fifteen, a partner alert on day thirty. TaskTracker24 sends them in your brand voice.",
+    body: "Configure the cadence once — a soft nudge on day three, a firm reminder on day fifteen, a partner alert on day thirty. StudyCafe sends them in your brand voice.",
     img: commsImg,
     bullets: ["Tone-tunable reminder templates", "WhatsApp + email delivery", "One-click payment links"],
   },
@@ -100,14 +100,14 @@ export default function SolutionsPage() {
       {/* Hero */}
       <section className="relative overflow-hidden">
         <div className="absolute inset-0 gradient-spotlight" aria-hidden />
-        <div className="container-page relative grid items-center gap-12 py-20 lg:grid-cols-2 lg:py-24">
+        <div className="container-page relative grid items-center gap-12 py-12 lg:grid-cols-2 lg:py-20">
           <div>
             <span className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">Solutions</span>
-            <h1 className="mt-3 font-display text-5xl font-bold leading-tight text-foreground sm:text-6xl text-balance">
+            <h1 className="mt-3 font-display text-4xl font-bold leading-[1.05] text-foreground sm:text-5xl lg:text-5xl text-balance">
               The best solution for the way modern firms work.
             </h1>
             <p className="mt-4 max-w-xl text-lg text-muted-foreground">
-              Whether you bill from one entity or seven, run a five-person team or fifty, TaskTracker24 fits the shape of your practice — not the other way around.
+              Whether you bill from one entity or seven, run a five-person team or fifty, StudyCafe fits the shape of your practice — not the other way around.
             </p>
             <ul className="mt-6 grid gap-2 sm:grid-cols-2">
               {benefits.map((b) => (
@@ -123,7 +123,7 @@ export default function SolutionsPage() {
             </div>
           </div>
           <div className="relative">
-            <div className="absolute -inset-4 rounded-3xl gradient-emerald opacity-15 blur-2xl" aria-hidden />
+            <div className="absolute -inset-4 rounded-3xl gradient-blue opacity-15 blur-2xl" aria-hidden />
             <Image src={teamImg} alt="Multi-generational accounting team collaborating" width={1280} height={896} className="relative rounded-3xl object-cover shadow-float" />
           </div>
         </div>
@@ -134,11 +134,11 @@ export default function SolutionsPage() {
         {blocks.map((b, i) => {
           const reverse = i % 2 === 1;
           return (
-            <section key={b.title} className="container-page py-16">
+            <section key={b.title} className="container-page py-12">
               <div className={`grid items-center gap-12 lg:grid-cols-2 ${reverse ? "lg:[&>div:first-child]:order-2" : ""}`}>
                 <Reveal>
                   <span className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">{b.eyebrow}</span>
-                  <h2 className="mt-3 font-display text-3xl font-bold text-foreground sm:text-4xl text-balance">{b.title}</h2>
+                  <h2 className="mt-3 font-display text-3xl font-bold text-foreground sm:text-3xl text-balance">{b.title}</h2>
                   <p className="mt-4 text-lg text-muted-foreground">{b.body}</p>
                   <ul className="mt-6 space-y-2">
                     {b.bullets.map((bp) => (
@@ -169,10 +169,10 @@ export default function SolutionsPage() {
       </div>
 
       {/* Advanced grid */}
-      <section className="container-page py-20">
+      <section className="container-page py-16">
         <Reveal className="max-w-2xl">
           <span className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">Advanced features</span>
-          <h2 className="mt-3 font-display text-4xl font-bold text-foreground sm:text-5xl text-balance">
+          <h2 className="mt-3 font-display text-4xl font-bold text-foreground sm:text-4xl text-balance">
             Everything else a serious firm expects.
           </h2>
         </Reveal>

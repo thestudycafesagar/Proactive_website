@@ -6,7 +6,7 @@ export function IconBadge({ icon: Icon, size = "md" }: { icon: LucideIcon; size?
   return (
     <span
       className={`inline-grid ${dim} place-items-center rounded-full bg-primary/8 text-primary`}
-      style={{ boxShadow: "inset 0 0 0 1.5px color-mix(in oklab, var(--accent-gold) 70%, transparent)" }}
+      style={{ boxShadow: "inset 0 0 0 1.5px color-mix(in oklab, var(--accent-blue) 70%, transparent)" }}
     >
       <Icon className={iconDim} strokeWidth={1.8} />
     </span>

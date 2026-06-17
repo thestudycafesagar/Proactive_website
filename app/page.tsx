@@ -19,11 +19,11 @@ import webappImg from "@/assets/feature-webapp.jpg";
 import reportsImg from "@/assets/feature-reports.jpg";
 
 export const metadata = {
-  title: "TaskTracker24 — The Office OS for Modern CAs & Accountants",
-  description: "Automate your firm with TaskTracker24: smart task management, billing, communication, documents and reporting built for CAs.",
+  title: "StudyCafe — The Office OS for Modern CAs & Accountants",
+  description: "Automate your firm with StudyCafe: smart task management, billing, communication, documents and reporting built for CAs.",
   openGraph: {
-    title: "TaskTracker24 — The Office OS for Modern CAs & Accountants",
-    description: "Automate your firm with TaskTracker24: smart task management, billing, communication and reporting.",
+    title: "StudyCafe — The Office OS for Modern CAs & Accountants",
+    description: "Automate your firm with StudyCafe: smart task management, billing, communication and reporting.",
     type: "website",
   },
 };
@@ -93,16 +93,16 @@ export default function HomePage() {
       {/* HERO */}
       <section className="relative overflow-hidden">
         <div className="absolute inset-0 gradient-spotlight" aria-hidden />
-        <div className="container-page relative grid items-center gap-12 py-20 lg:grid-cols-[1.1fr_1fr] lg:py-28">
+        <div className="container-page relative grid items-center gap-12 py-12 lg:grid-cols-[1.1fr_1fr] lg:py-20">
           <div>
             <span className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-3 py-1 text-xs font-medium text-primary">
               <Sparkles className="h-3.5 w-3.5" /> New: AI-assisted compliance calendar
             </span>
-            <h1 className="mt-5 font-display text-5xl font-bold leading-[1.05] text-foreground sm:text-6xl text-balance">
+            <h1 className="mt-5 font-display text-4xl font-bold leading-[1.05] text-foreground sm:text-5xl lg:text-5xl text-balance">
               The Office OS for <span className="text-primary">Modern CAs</span> & Accountants.
             </h1>
             <p className="mt-5 max-w-xl text-lg text-muted-foreground">
-              TaskTracker24 is the practice management platform that replaces ten tools, twenty spreadsheets, and a hundred follow-up calls.
+              StudyCafe is the practice management platform that replaces ten tools, twenty spreadsheets, and a hundred follow-up calls.
             </p>
             <ul className="mt-6 grid gap-3 sm:grid-cols-3">
               {heroBullets.map((b) => (
@@ -124,10 +124,10 @@ export default function HomePage() {
             </div>
           </div>
           <div className="relative">
-            <div className="absolute -inset-6 rounded-[2rem] gradient-emerald opacity-15 blur-3xl" aria-hidden />
+            <div className="absolute -inset-6 rounded-[2rem] gradient-blue opacity-15 blur-3xl" aria-hidden />
             <Image
               src={heroImg}
-              alt="TaskTracker24 dashboard on laptop, tablet and phone"
+              alt="StudyCafe dashboard on laptop, tablet and phone"
               width={1280}
               height={1024}
               className="relative animate-float rounded-3xl object-cover shadow-float"
@@ -137,9 +137,9 @@ export default function HomePage() {
         </div>
 
         {/* Trusted by */}
-        <div className="container-page relative pb-20">
+        <div className="container-page relative pb-16">
           <p className="text-center text-sm font-medium text-muted-foreground">
-            Join <span className="font-semibold text-foreground">2,000+ CA Firms</span> that trust TaskTracker24.
+            Join <span className="font-semibold text-foreground">2,000+ CA Firms</span> that trust StudyCafe.
           </p>
           <div className="mt-6 mask-fade-x overflow-hidden">
             <div className="flex w-max animate-marquee gap-12 py-2">
@@ -161,7 +161,7 @@ export default function HomePage() {
       </section>
 
       {/* SCALE CARDS */}
-      <section className="container-page py-20">
+      <section className="container-page py-16">
         <Reveal className="max-w-2xl">
           <span className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">The smarter way to scale</span>
           <h2 className="mt-3 font-display text-4xl font-bold text-foreground sm:text-5xl text-balance">
@@ -185,19 +185,19 @@ export default function HomePage() {
         const subText = i % 2 === 0 ? "text-primary-foreground/75" : "text-muted-foreground";
         return (
           <section key={f.title} className={`relative overflow-hidden ${tint}`}>
-            {i % 2 === 0 && <div className="absolute inset-0 gradient-emerald opacity-90" aria-hidden />}
+            {i % 2 === 0 && <div className="absolute inset-0 gradient-blue opacity-90" aria-hidden />}
             {i % 2 === 0 && <div className="absolute inset-0 grid-architectural opacity-20" aria-hidden />}
-            <div className={`container-page relative grid items-center gap-12 py-20 lg:grid-cols-2 ${f.reverse ? "lg:[&>div:first-child]:order-2" : ""}`}>
+            <div className={`container-page relative grid items-center gap-12 py-16 lg:grid-cols-2 ${f.reverse ? "lg:[&>div:first-child]:order-2" : ""}`}>
               <Reveal>
-                <span className={`text-xs font-semibold uppercase tracking-[0.2em] ${i % 2 === 0 ? "text-accent-gold" : "text-primary"}`}>
+                <span className={`text-xs font-semibold uppercase tracking-[0.2em] ${i % 2 === 0 ? "text-accent-blue" : "text-primary"}`}>
                   {f.eyebrow}
                 </span>
-                <h2 className="mt-3 font-display text-4xl font-bold leading-tight sm:text-5xl text-balance">{f.title}</h2>
+                <h2 className="mt-3 font-display text-4xl font-bold leading-tight sm:text-1xl text-balance">{f.title}</h2>
                 <p className={`mt-4 max-w-xl text-lg ${subText}`}>{f.body}</p>
                 <ul className="mt-6 space-y-3">
                   {f.points.map((p) => (
                     <li key={p} className="flex items-start gap-3">
-                      <span className={`mt-1 grid h-5 w-5 place-items-center rounded-full ${i % 2 === 0 ? "bg-accent-gold/20 text-accent-gold" : "bg-primary/10 text-primary"}`}>
+                      <span className={`mt-1 grid h-5 w-5 place-items-center rounded-full ${i % 2 === 0 ? "bg-accent-blue/20 text-accent-blue" : "bg-primary/10 text-primary"}`}>
                         <svg viewBox="0 0 24 24" className="h-3 w-3" fill="none" stroke="currentColor" strokeWidth="3"><path d="M5 13l4 4L19 7" /></svg>
                       </span>
                       <span className="text-base">{p}</span>
@@ -206,7 +206,7 @@ export default function HomePage() {
                 </ul>
               </Reveal>
               <Reveal delay={120} className="relative">
-                <div className={`absolute -inset-4 rounded-3xl ${i % 2 === 0 ? "bg-accent-gold/20" : "bg-primary/10"} blur-2xl`} aria-hidden />
+                <div className={`absolute -inset-4 rounded-3xl ${i % 2 === 0 ? "bg-accent-blue/20" : "bg-primary/10"} blur-2xl`} aria-hidden />
                 <Image
                   src={f.img}
                   alt={f.title}
@@ -221,10 +221,10 @@ export default function HomePage() {
       })}
 
       {/* SECURITY */}
-      <section className="container-page py-20">
+      <section className="container-page py-16">
         <Reveal className="max-w-2xl">
           <span className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">Top-notch secured technology</span>
-          <h2 className="mt-3 font-display text-4xl font-bold text-foreground sm:text-5xl text-balance">
+          <h2 className="mt-3 font-display text-4xl font-bold text-foreground text-balance">
             Bank-grade security, built in from day one.
           </h2>
         </Reveal>
@@ -240,12 +240,12 @@ export default function HomePage() {
       </section>
 
       {/* TESTIMONIAL */}
-      <section className="container-page pb-20">
+      <section className="container-page pb-16">
         <Reveal className="relative overflow-hidden rounded-[2rem] border border-border bg-surface p-10 shadow-elegant lg:p-16">
           <Quote className="absolute right-10 top-10 h-24 w-24 text-primary/8" aria-hidden />
           <div className="relative grid gap-10 lg:grid-cols-[1fr_2fr]">
             <div className="flex flex-col items-start gap-4">
-              <div className="grid h-24 w-24 place-items-center rounded-3xl gradient-emerald text-3xl font-bold text-accent-gold">
+              <div className="grid h-24 w-24 place-items-center rounded-3xl gradient-blue text-3xl font-bold text-accent-blue">
                 AR
               </div>
               <div>
@@ -254,19 +254,19 @@ export default function HomePage() {
               </div>
             </div>
             <blockquote className="font-display text-2xl font-medium leading-snug text-foreground sm:text-3xl text-balance">
-              {`"We replaced four tools with TaskTracker24 in the first month. By month three our team was billing 22% more hours with the same headcount — because nothing slipped between the cracks anymore."`}
+              {`"We replaced four tools with StudyCafe in the first month. By month three our team was billing 22% more hours with the same headcount — because nothing slipped between the cracks anymore."`}
             </blockquote>
           </div>
         </Reveal>
       </section>
 
       {/* METRICS */}
-      <section className="container-page pb-24">
-        <Reveal className="rounded-[2rem] gradient-emerald p-1">
+      <section className="container-page pb-16">
+        <Reveal className="rounded-[2rem] gradient-blue p-1">
           <div className="grid gap-8 rounded-[calc(2rem-4px)] bg-background p-10 sm:grid-cols-3">
             {metrics.map((m, i) => (
               <Reveal key={m.label} delay={i * 100} className="text-center">
-                <CountUp value={m.value} className="font-display text-5xl font-bold text-primary sm:text-6xl" />
+                <CountUp value={m.value} className="font-display text-4xl font-bold text-primary sm:text-5xl" />
                 <div className="sr-only">{m.value}</div>
                 <p className="mt-2 text-sm uppercase tracking-wider text-muted-foreground">{m.label}</p>
               </Reveal>

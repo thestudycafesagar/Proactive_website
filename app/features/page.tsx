@@ -34,7 +34,7 @@ const panels: Panel[] = [
     ],
   },
   {
-    icon: ListChecks, title: "Task Management", img: tasksImg,
+    icon: ListChecks, title: "StudyCafenagement", img: tasksImg,
     summary: "Create, assign, automate. The lifecycle every task in your firm should follow.",
     groups: [
       { heading: "Create", items: ["47+ filing templates ready to use", "Custom checklists per service line", "Recurring schedules in one click"] },
@@ -87,12 +87,12 @@ export default function FeaturesPage() {
     <SiteShell>
       <section className="relative overflow-hidden">
         <div className="absolute inset-0 gradient-spotlight" aria-hidden />
-        <div className="container-page relative py-20 text-center lg:py-24">
+        <div className="container-page relative py-12 text-center lg:py-20">
           <span className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">Features</span>
-          <h1 className="mx-auto mt-3 max-w-3xl font-display text-5xl font-bold leading-tight text-foreground sm:text-6xl text-balance">
+          <h1 className="mx-auto mt-3 max-w-3xl font-display text-4xl font-bold leading-[1.05] text-foreground sm:text-5xl lg:text-5xl text-balance">
             Every tool your firm needs, designed to feel like one.
           </h1>
-          <p className="mx-auto mt-4 max-w-2xl text-lg text-muted-foreground">
+          <p className="mx-auto mt-4 max-w-2xl text-base text-muted-foreground">
             Six interlocking modules cover the full lifecycle of a modern accounting practice — without the integration tax of stitching ten tools together.
           </p>
           <div className="mt-8 flex flex-wrap justify-center gap-3">
@@ -114,7 +114,7 @@ export default function FeaturesPage() {
             ].map((s, i) => (
               <Reveal key={s.step} delay={i * 120} className="relative rounded-2xl bg-surface-strong p-5">
                 <div className="flex items-baseline gap-3">
-                  <span className="font-display text-3xl font-bold text-accent-gold">{s.step}</span>
+                  <span className="font-display text-3xl font-bold text-accent-blue">{s.step}</span>
                   <span className="font-display text-lg font-semibold text-foreground">{s.label}</span>
                 </div>
                 <p className="mt-2 text-sm text-muted-foreground">{s.body}</p>
@@ -128,7 +128,7 @@ export default function FeaturesPage() {
       </section>
 
       {/* Expandable panels */}
-      <section className="container-page pb-20">
+      <section className="container-page pb-16">
         <div className="space-y-4">
           {panels.map((p, i) => {
             const isOpen = i === open;
@@ -156,7 +156,7 @@ export default function FeaturesPage() {
                           <ul className="mt-3 space-y-2">
                             {g.items.map((it) => (
                               <li key={it} className="flex items-start gap-2 text-sm text-foreground">
-                                <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-accent-gold" />
+                                <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-accent-blue" />
                                 {it}
                               </li>
                             ))}
@@ -165,7 +165,7 @@ export default function FeaturesPage() {
                       ))}
                     </div>
                     <div className="relative">
-                      <div className="absolute -inset-3 rounded-3xl gradient-emerald opacity-15 blur-2xl" aria-hidden />
+                      <div className="absolute -inset-3 rounded-3xl gradient-blue opacity-15 blur-2xl" aria-hidden />
                       <Image src={p.img} alt={`${p.title} preview`} width={1280} height={896} className="relative rounded-2xl object-cover shadow-elegant" />
                     </div>
                   </div>

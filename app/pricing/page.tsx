@@ -45,7 +45,7 @@ const faqs = [
   { q: "Can I switch plans later?", a: "Anytime, in both directions. Upgrades are prorated; downgrades take effect at the next billing cycle." },
   { q: "How are users counted?", a: "A user is any team member with login access. Clients and external collaborators are free and unlimited on every plan." },
   { q: "Do you support multi-entity billing?", a: "Yes — multi-entity billing is included on the Scale plan and lets you bill from any number of GST-registered entities." },
-  { q: "What about data security?", a: "TaskTracker24 runs on AWS with end-to-end encryption, single-tenant data isolation, and SOC2-aligned controls. We never train on your data." },
+  { q: "What about data security?", a: "StudyCafe runs on AWS with end-to-end encryption, single-tenant data isolation, and SOC2-aligned controls. We never train on your data." },
   { q: "Do you offer a partner programme?", a: "Yes. Implementation partners get co-marketing, certification, and revenue share. Contact our partnerships team for details." },
 ];
 
@@ -59,9 +59,9 @@ export default function PricingPage() {
       {/* Hero */}
       <section className="relative overflow-hidden">
         <div className="absolute inset-0 gradient-spotlight" aria-hidden />
-        <div className="container-page relative py-20 text-center lg:py-24">
+        <div className="container-page relative py-12 text-center lg:py-20">
           <span className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">Pricing</span>
-          <h1 className="mx-auto mt-3 max-w-3xl font-display text-5xl font-bold leading-tight text-foreground sm:text-6xl text-balance">
+          <h1 className="mx-auto mt-3 max-w-3xl font-display text-4xl font-bold leading-[1.05] text-foreground sm:text-5xl lg:text-5xl text-balance">
             Simple pricing. Real value. Pay per user.
           </h1>
           <p className="mx-auto mt-4 max-w-2xl text-lg text-muted-foreground">
@@ -77,15 +77,14 @@ export default function PricingPage() {
             <Reveal
               key={t.name}
               delay={idx * 100}
-              className={`relative flex flex-col rounded-[2rem] p-8 ${
-                t.featured
-                  ? "bg-primary-deep text-primary-foreground shadow-float"
-                  : "border border-border bg-surface text-foreground"
-              }`}
-              style={t.featured ? { boxShadow: "var(--shadow-float), 0 0 0 2px var(--accent-gold)" } : undefined}
+              className={`relative flex flex-col rounded-[2rem] p-8 ${t.featured
+                ? "bg-primary-deep text-primary-foreground shadow-float"
+                : "border border-border bg-surface text-foreground"
+                }`}
+              style={t.featured ? { boxShadow: "var(--shadow-float), 0 0 0 2px var(--accent-blue)" } : undefined}
             >
               {t.featured && (
-                <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-accent-gold px-3 py-1 text-xs font-semibold text-primary-deep">
+                <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-accent-blue px-3 py-1 text-xs font-semibold text-primary-deep">
                   Most Popular
                 </span>
               )}
@@ -98,18 +97,17 @@ export default function PricingPage() {
               <ul className="mt-6 space-y-2.5">
                 {t.perks.map((p) => (
                   <li key={p} className="flex items-start gap-2 text-sm">
-                    <Check className={`mt-0.5 h-4 w-4 shrink-0 ${t.featured ? "text-accent-gold" : "text-primary"}`} />
+                    <Check className={`mt-0.5 h-4 w-4 shrink-0 ${t.featured ? "text-accent-blue" : "text-primary"}`} />
                     {p}
                   </li>
                 ))}
               </ul>
               <a
                 href="#trial"
-                className={`mt-8 rounded-full px-5 py-3 text-center text-sm font-semibold transition ${
-                  t.featured
-                    ? "bg-accent-gold text-primary-deep hover:brightness-95"
-                    : "bg-primary text-primary-foreground hover:bg-primary-deep"
-                }`}
+                className={`mt-8 rounded-full px-5 py-3 text-center text-sm font-semibold transition ${t.featured
+                  ? "bg-accent-blue text-primary-deep hover:brightness-95"
+                  : "bg-primary text-primary-foreground hover:bg-primary-deep"
+                  }`}
               >
                 {t.cta}
               </a>
@@ -205,7 +203,7 @@ export default function PricingPage() {
                       {typeof v === "string" ? (
                         <span className="font-medium text-foreground">{v}</span>
                       ) : v ? (
-                        <Check className="h-5 w-5 text-accent-gold" />
+                        <Check className="h-5 w-5 text-accent-blue" />
                       ) : (
                         <Minus className="h-5 w-5 text-muted-foreground/50" />
                       )}
@@ -220,11 +218,11 @@ export default function PricingPage() {
 
       {/* Testimonial */}
       <section className="container-page pb-16">
-        <Reveal className="relative overflow-hidden rounded-[2rem] gradient-emerald p-10 text-primary-foreground lg:p-16">
-          <Quote className="absolute right-10 top-10 h-24 w-24 text-accent-gold/30" aria-hidden />
+        <Reveal className="relative overflow-hidden rounded-[2rem] gradient-blue p-10 text-primary-foreground lg:p-16">
+          <Quote className="absolute right-10 top-10 h-24 w-24 text-accent-blue/30" aria-hidden />
           <div className="relative grid gap-10 lg:grid-cols-[1fr_2fr]">
             <div>
-              <div className="grid h-24 w-24 place-items-center rounded-3xl bg-accent-gold/20 text-3xl font-bold text-accent-gold">VK</div>
+              <div className="grid h-24 w-24 place-items-center rounded-3xl bg-accent-blue/20 text-3xl font-bold text-accent-blue">VK</div>
               <p className="mt-4 font-display text-lg font-semibold">CA Vikram Kapoor</p>
               <p className="text-sm text-primary-foreground/75">Partner, Kapoor & Mehta LLP</p>
             </div>

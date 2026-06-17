@@ -74,10 +74,10 @@ export function SiteFooter() {
         </div>
 
         <div className="mt-12 flex flex-col items-start justify-between gap-4 border-t border-border pt-6 text-xs text-muted-foreground md:flex-row md:items-center">
-          <p>© {new Date().getFullYear()} TaskTracker24 Inc. All rights reserved.</p>
+          <p>© {new Date().getFullYear()} StudyCafe Inc. All rights reserved.</p>
           <p className="flex items-center gap-2">
             <span>Powered by</span>
-            <span className="rounded-full bg-primary/10 px-3 py-1 font-semibold text-primary">TaskTracker24 Cloud</span>
+            <span className="rounded-full bg-primary/10 px-3 py-1 font-semibold text-primary">StudyCafe Cloud</span>
           </p>
         </div>
       </div>
