@@ -103,7 +103,7 @@ export default function SolutionsPage() {
         <div className="container-page relative grid items-center gap-12 py-12 lg:grid-cols-2 lg:py-20">
           <div>
             <span className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">Solutions</span>
-            <h1 className="mt-3 font-display text-4xl font-bold leading-[1.05] text-foreground sm:text-5xl lg:text-5xl text-balance">
+            <h1 className="mt-3 font-display text-4xl font-bold leading-[1.05] text-foreground sm:text-4xl lg:text-4xl text-balance">
               The best solution for the way modern firms work.
             </h1>
             <p className="mt-4 max-w-xl text-lg text-muted-foreground">

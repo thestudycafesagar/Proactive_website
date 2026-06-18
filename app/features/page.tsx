@@ -89,7 +89,7 @@ export default function FeaturesPage() {
         <div className="absolute inset-0 gradient-spotlight" aria-hidden />
         <div className="container-page relative py-12 text-center lg:py-20">
           <span className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">Features</span>
-          <h1 className="mx-auto mt-3 max-w-3xl font-display text-4xl font-bold leading-[1.05] text-foreground sm:text-5xl lg:text-5xl text-balance">
+          <h1 className="mx-auto mt-3 max-w-3xl font-display text-4xl font-bold leading-[1.05] text-foreground sm:text-4xl lg:text-4xl text-balance">
             Every tool your firm needs, designed to feel like one.
           </h1>
           <p className="mx-auto mt-4 max-w-2xl text-base text-muted-foreground">

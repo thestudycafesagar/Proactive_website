@@ -98,7 +98,7 @@ export default function HomePage() {
             <span className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-3 py-1 text-xs font-medium text-primary">
               <Sparkles className="h-3.5 w-3.5" /> New: AI-assisted compliance calendar
             </span>
-            <h1 className="mt-5 font-display text-4xl font-bold leading-[1.05] text-foreground sm:text-5xl lg:text-5xl text-balance">
+            <h1 className="mt-5 font-display text-4xl font-bold leading-[1.05] text-foreground sm:text-4xl lg:text-4xl text-balance">
               The Office OS for <span className="text-primary">Modern CAs</span> & Accountants.
             </h1>
             <p className="mt-5 max-w-xl text-lg text-muted-foreground">
@@ -164,7 +164,7 @@ export default function HomePage() {
       <section className="container-page py-16">
         <Reveal className="max-w-2xl">
           <span className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">The smarter way to scale</span>
-          <h2 className="mt-3 font-display text-4xl font-bold text-foreground sm:text-5xl text-balance">
+          <h2 className="mt-3 font-display text-4xl font-bold text-foreground sm:text-4xl text-balance">
             Four shifts that make a firm feel modern overnight.
           </h2>
         </Reveal>
@@ -266,7 +266,7 @@ export default function HomePage() {
           <div className="grid gap-8 rounded-[calc(2rem-4px)] bg-background p-10 sm:grid-cols-3">
             {metrics.map((m, i) => (
               <Reveal key={m.label} delay={i * 100} className="text-center">
-                <CountUp value={m.value} className="font-display text-4xl font-bold text-primary sm:text-5xl" />
+                <CountUp value={m.value} className="font-display text-4xl font-bold text-primary sm:text-4xl" />
                 <div className="sr-only">{m.value}</div>
                 <p className="mt-2 text-sm uppercase tracking-wider text-muted-foreground">{m.label}</p>
               </Reveal>

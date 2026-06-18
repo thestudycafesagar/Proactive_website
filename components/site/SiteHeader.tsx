@@ -10,8 +10,8 @@ const navItems = [
   { label: "Solutions", to: "/solutions" as const },
   { label: "Features", to: "/features" as const },
   { label: "Pricing", to: "/pricing" as const },
-  { label: "Help Center", to: "/" as const },
-  { label: "Contact Us", to: "/" as const },
+  { label: "Help Center", to: "/help" as const },
+  { label: "Contact Us", to: "/contact" as const },
 ];
 
 export function SiteHeader() {

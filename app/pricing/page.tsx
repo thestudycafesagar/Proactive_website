@@ -61,7 +61,7 @@ export default function PricingPage() {
         <div className="absolute inset-0 gradient-spotlight" aria-hidden />
         <div className="container-page relative py-12 text-center lg:py-20">
           <span className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">Pricing</span>
-          <h1 className="mx-auto mt-3 max-w-3xl font-display text-4xl font-bold leading-[1.05] text-foreground sm:text-5xl lg:text-5xl text-balance">
+          <h1 className="mx-auto mt-3 max-w-3xl font-display text-4xl font-bold leading-[1.05] text-foreground sm:text-4xl lg:text-4xl text-balance">
             Simple pricing. Real value. Pay per user.
           </h1>
           <p className="mx-auto mt-4 max-w-2xl text-lg text-muted-foreground">
@@ -91,7 +91,7 @@ export default function PricingPage() {
               <h3 className="font-display text-2xl font-semibold">{t.name}</h3>
               <p className={`mt-1 text-sm ${t.featured ? "text-primary-foreground/75" : "text-muted-foreground"}`}>{t.blurb}</p>
               <div className="mt-6 flex items-baseline gap-1">
-                <span className="font-display text-5xl font-bold">${t.price}</span>
+                <span className="font-display text-4xl font-bold">${t.price}</span>
                 <span className={`text-sm ${t.featured ? "text-primary-foreground/75" : "text-muted-foreground"}`}>/ user / month</span>
               </div>
               <ul className="mt-6 space-y-2.5">
@@ -130,12 +130,12 @@ export default function PricingPage() {
               </p>
               <div className="mt-8">
                 <input
-                  type="range" min={1} max={100} value={users}
+                  type="range" min={5} max={100} value={users}
                   onChange={(e) => setUsers(Number(e.target.value))}
                   className="w-full accent-[var(--primary)]"
                 />
                 <div className="mt-2 flex justify-between text-xs text-muted-foreground">
-                  <span>1</span><span>25</span><span>50</span><span>75</span><span>100</span>
+                  <span>5</span><span>25</span><span>50</span><span>75</span><span>100</span>
                 </div>
               </div>
               <div className="mt-6 flex flex-wrap items-end gap-4">
