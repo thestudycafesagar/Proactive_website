@@ -35,10 +35,10 @@ export function SiteHeader() {
           ))}
         </nav>
         <div className="hidden items-center gap-3 lg:flex">
-          <a className="rounded-full border border-primary/30 px-4 py-2 text-sm font-medium text-primary transition hover:bg-primary/5" href="#login">
+          <a className="rounded-full border border-primary/30 px-4 py-2 text-sm font-medium text-primary transition hover:bg-primary/5" href="http://localhost:8080/login" target="_blank">
             Client Login
           </a>
-          <a className="rounded-full bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground shadow-elegant transition hover:bg-primary-deep" href="#trial">
+          <a className="rounded-full bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground shadow-elegant transition hover:bg-primary-deep" href="/signup">
             Start Free Trial
           </a>
         </div>
@@ -55,8 +55,8 @@ export function SiteHeader() {
               </Link>
             ))}
             <div className="flex gap-3 pt-2">
-              <a className="flex-1 rounded-full border border-primary/30 px-4 py-2 text-center text-sm font-medium text-primary" href="#login">Client Login</a>
-              <a className="flex-1 rounded-full bg-primary px-4 py-2 text-center text-sm font-semibold text-primary-foreground" href="#trial">Start Free Trial</a>
+              <a className="flex-1 rounded-full border border-primary/30 px-4 py-2 text-center text-sm font-medium text-primary" href="http://localhost:8080/login" target="_blank">Client Login</a>
+              <a className="flex-1 rounded-full bg-primary px-4 py-2 text-center text-sm font-semibold text-primary-foreground" href="/signup">Start Free Trial</a>
             </div>
           </div>
         </div>

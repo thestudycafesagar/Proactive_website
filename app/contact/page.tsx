@@ -47,7 +47,7 @@ export default function ContactPage() {
     <SiteShell>
       <section className="container-page py-12 lg:py-20">
         <div className="mb-12">
-          <h1 className="font-display text-4xl font-bold leading-[1.05] text-foreground sm:text-5xl lg:text-6xl text-balance">
+          <h1 className="font-display text-4xl font-bold leading-[1.05] text-foreground sm:text-4xl lg:text-5xl text-balance">
             Contact Us
           </h1>
           <p className="mt-4 text-lg text-muted-foreground max-w-2xl">
