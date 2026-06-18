@@ -23,7 +23,7 @@ export default function LoginPage() {
       Inside: a large card-like container that is split Left (animation) | Right (form)
     */
     <div className="flex min-h-screen items-center justify-center bg-[#1A1A1A] p-4 sm:p-6">
-      <div className="flex w-full max-w-[880px] overflow-hidden rounded-[2rem] shadow-2xl" style={{ minHeight: "560px" }}>
+      <div className="flex w-full max-w-220 overflow-hidden rounded-[2rem] shadow-2xl" style={{ minHeight: "560px" }}>
 
         {/* ── LEFT PANEL ── Interactive SVG characters */}
         <div className="hidden lg:flex lg:w-[52%] shrink-0">

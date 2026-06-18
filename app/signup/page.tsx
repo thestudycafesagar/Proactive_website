@@ -122,7 +122,7 @@ export default function SignupPage() {
               <div>
                 <button
                   type="submit"
-                  className="flex w-full justify-center rounded-md bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground shadow-sm transition-colors hover:bg-primary-deep focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                  className="flex w-full justify-center rounded-md bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground shadow-sm transition-colors hover:bg-primary-deep focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
                 >
                   Create account
                 </button>
@@ -144,7 +144,7 @@ export default function SignupPage() {
 
       {/* Right side: Branding/Benefits */}
       <div className="hidden lg:relative lg:block lg:w-1/2 lg:bg-surface-strong lg:p-12">
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-accent-blue/5" aria-hidden />
+        <div className="absolute inset-0 bg-linear-to-br from-primary/5 to-accent-blue/5" aria-hidden />
         <div className="absolute inset-0 grid-architectural opacity-30" aria-hidden />
         <div className="relative flex h-full flex-col justify-center max-w-lg mx-auto">
           <h2 className="font-display text-4xl font-bold text-foreground">
