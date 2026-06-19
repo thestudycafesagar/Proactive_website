@@ -176,7 +176,7 @@ export default function SignupPage() {
 
   return (
     <div className="h-screen w-full bg-primary flex items-center justify-center p-4 sm:p-8 overflow-hidden">
-      <div className="w-full max-w-5xl h-full max-h-[90vh] md:max-h-[650px] grid md:grid-cols-2 rounded-3xl overflow-hidden bg-surface border border-border shadow-2xl relative">
+      <div className="w-full max-w-5xl h-full max-h-[90vh] md:max-h-162.5 grid md:grid-cols-2 rounded-3xl overflow-hidden bg-surface border border-border shadow-2xl relative">
         {/* Left: Pricing Calculator */}
         <div className="bg-surface-strong hidden md:flex flex-col items-center justify-center p-8 pb-12 relative">
           <div className="max-w-md w-full">
@@ -190,7 +190,7 @@ export default function SignupPage() {
                 <input
                   type="range" min={1} max={100} value={users}
                   onChange={(e) => handleUsersChange(Number(e.target.value))}
-                  className="w-full accent-[var(--primary)]"
+                  className="w-full accent-primary"
                 />
                 <div className="mt-2 flex justify-between text-xs text-muted-foreground">
                   <span>1</span><span>25</span><span>50</span><span>75</span><span>100</span>
