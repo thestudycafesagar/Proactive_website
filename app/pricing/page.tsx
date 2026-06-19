@@ -1,6 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import { useDispatch } from "react-redux";
+import { useRouter } from "next/navigation";
+import { setUsersCount } from "@/lib/features/pricing/pricingSlice";
 import { Check, Minus, ChevronDown, Quote } from "lucide-react";
 import { SiteShell } from "@/components/site/SiteShell";
 import { FinalCTA } from "@/components/site/FinalCTA";
@@ -8,36 +11,41 @@ import { Reveal } from "@/components/site/Reveal";
 
 const tiers = [
   {
-    name: "Starter", price: 19, blurb: "For solo practitioners getting organised.",
-    perks: ["Up to 3 team members", "Unlimited clients", "Task & calendar management", "Basic billing & invoices", "WhatsApp & email channel"],
-    cta: "Start Free Trial", featured: false,
+    name: "1-5 Users", price: 99, blurb: "For solo practitioners getting organised.",
+    perks: ["Up to 5 team members", "Unlimited clients", "Task & calendar management", "Basic billing & invoices", "WhatsApp & email channel"],
+    cta: "Buy plan", featured: false, defaultUsers: 5,
   },
   {
-    name: "Growth", price: 39, blurb: "For growing firms that need automation.",
-    perks: ["Up to 25 team members", "Everything in Starter", "Recurring compliance automations", "Bulk send & client portal", "Profitability & utilisation reports", "Branded client mobile app"],
-    cta: "Start Free Trial", featured: true,
+    name: "6-10 Users", price: 91, blurb: "For growing firms that need automation.",
+    perks: ["Up to 10 team members", "Everything in 1-5 Users", "Recurring compliance automations", "Bulk send & client portal", "Profitability & utilisation reports", "Branded client mobile app"],
+    cta: "Buy plan", featured: true, defaultUsers: 10,
   },
   {
-    name: "Scale", price: 69, blurb: "For multi-entity firms with serious scale.",
-    perks: ["Unlimited team members", "Everything in Growth", "Multi-entity billing", "SSO, audit logs & SLA controls", "Dedicated success manager", "Custom workflow designer"],
-    cta: "Talk to Sales", featured: false,
+    name: "11-30 Users", price: 83, blurb: "For multi-entity firms with serious scale.",
+    perks: ["Up to 30 team members", "Everything in 6-10 Users", "Multi-entity billing", "SSO, audit logs & SLA controls", "Dedicated success manager", "Custom workflow designer"],
+    cta: "Buy plan", featured: false, defaultUsers: 30,
+  },
+  {
+    name: "31-100 Users", price: 75, blurb: "For large organizations with complex needs.",
+    perks: ["Up to 100 team members", "Everything in 11-30 Users", "Enterprise-grade support", "Custom integrations", "On-premise deployment options"],
+    cta: "Talk to Sales", featured: false, defaultUsers: 100,
   },
 ];
 
 const matrix: { feature: string; values: (true | false | string)[] }[] = [
-  { feature: "Team members", values: ["3", "25", "Unlimited"] },
-  { feature: "Clients", values: ["Unlimited", "Unlimited", "Unlimited"] },
-  { feature: "Task & calendar", values: [true, true, true] },
-  { feature: "Recurring compliance automations", values: [false, true, true] },
-  { feature: "Smart billing & receipts", values: [true, true, true] },
-  { feature: "Multi-entity billing", values: [false, false, true] },
-  { feature: "WhatsApp + email channel", values: [true, true, true] },
-  { feature: "Bulk send & client portal", values: [false, true, true] },
-  { feature: "Profitability & utilisation reports", values: [false, true, true] },
-  { feature: "Branded mobile app", values: [false, true, true] },
-  { feature: "SSO, audit logs & SLAs", values: [false, false, true] },
-  { feature: "Custom workflow designer", values: [false, false, true] },
-  { feature: "Dedicated success manager", values: [false, false, true] },
+  { feature: "Team members", values: ["1-5", "6-10", "11-30", "31-100"] },
+  { feature: "Clients", values: ["Unlimited", "Unlimited", "Unlimited", "Unlimited"] },
+  { feature: "Task & calendar", values: [true, true, true, true] },
+  { feature: "Recurring compliance automations", values: [false, true, true, true] },
+  { feature: "Smart billing & receipts", values: [true, true, true, true] },
+  { feature: "Multi-entity billing", values: [false, false, true, true] },
+  { feature: "WhatsApp + email channel", values: [true, true, true, true] },
+  { feature: "Bulk send & client portal", values: [false, true, true, true] },
+  { feature: "Profitability & utilisation reports", values: [false, true, true, true] },
+  { feature: "Branded mobile app", values: [false, true, true, true] },
+  { feature: "SSO, audit logs & SLAs", values: [false, false, true, true] },
+  { feature: "Custom workflow designer", values: [false, false, true, true] },
+  { feature: "Dedicated success manager", values: [false, false, true, true] },
 ];
 
 const faqs = [
@@ -51,7 +59,23 @@ const faqs = [
 
 export default function PricingPage() {
   const [users, setUsers] = useState(10);
-  const monthly = users * 39;
+  const dispatch = useDispatch();
+  const router = useRouter();
+
+  const handleBuy = (count: number) => {
+    dispatch(setUsersCount(count));
+    router.push("/signup");
+  };
+
+  let pricePerUser = 99;
+  if (users >= 6 && users <= 10) pricePerUser = 91;
+  else if (users >= 11 && users <= 30) pricePerUser = 83;
+  else if (users >= 31) pricePerUser = 75;
+
+  const monthly = users * pricePerUser;
+  const annualPerUser = pricePerUser * 12;
+  const totalAnnual = monthly * 12;
+
   const [openFaq, setOpenFaq] = useState<number | null>(0);
 
   return (
@@ -72,7 +96,7 @@ export default function PricingPage() {
 
       {/* Tiers */}
       <section className="container-page pb-16">
-        <div className="grid gap-6 md:grid-cols-3">
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
           {tiers.map((t, idx) => (
             <Reveal
               key={t.name}
@@ -91,7 +115,7 @@ export default function PricingPage() {
               <h3 className="font-display text-2xl font-semibold">{t.name}</h3>
               <p className={`mt-1 text-sm ${t.featured ? "text-primary-foreground/75" : "text-muted-foreground"}`}>{t.blurb}</p>
               <div className="mt-6 flex items-baseline gap-1">
-                <span className="font-display text-4xl font-bold">${t.price}</span>
+                <span className="font-display text-4xl font-bold">₹{t.price}</span>
                 <span className={`text-sm ${t.featured ? "text-primary-foreground/75" : "text-muted-foreground"}`}>/ user / month</span>
               </div>
               <ul className="mt-6 space-y-2.5">
@@ -102,15 +126,15 @@ export default function PricingPage() {
                   </li>
                 ))}
               </ul>
-              <a
-                href="#trial"
-                className={`mt-8 rounded-full px-5 py-3 text-center text-sm font-semibold transition ${t.featured
+              <button
+                onClick={() => handleBuy(t.defaultUsers)}
+                className={`mt-8 w-full rounded-full px-5 py-3 text-center text-sm font-semibold transition ${t.featured
                   ? "bg-accent-blue text-primary-deep hover:brightness-95"
                   : "bg-primary text-primary-foreground hover:bg-primary-deep"
                   }`}
               >
                 {t.cta}
-              </a>
+              </button>
             </Reveal>
           ))}
         </div>
@@ -125,8 +149,12 @@ export default function PricingPage() {
               <h2 className="mt-3 font-display text-3xl font-bold text-foreground sm:text-4xl text-balance">
                 How big is your team?
               </h2>
-              <p className="mt-3 text-muted-foreground">
-                Drag the slider. We'll show your monthly cost on the Growth plan in real time.
+              <div className="mt-4 flex items-baseline gap-2">
+                <span className="font-display text-4xl font-bold text-primary">₹{pricePerUser}</span>
+                <span className="text-lg text-muted-foreground">/ user / month</span>
+              </div>
+              <p className="mt-2 text-sm text-muted-foreground">
+                Drag the slider to see your price adjust based on team size.
               </p>
               <div className="mt-8">
                 <input
@@ -135,43 +163,55 @@ export default function PricingPage() {
                   className="w-full accent-[var(--primary)]"
                 />
                 <div className="mt-2 flex justify-between text-xs text-muted-foreground">
-                  <span>5</span><span>25</span><span>50</span><span>75</span><span>100</span>
+                  <span>1</span><span>25</span><span>50</span><span>75</span><span>100</span>
                 </div>
               </div>
-              <div className="mt-6 flex flex-wrap items-end gap-4">
+              <div className="mt-6 flex flex-wrap items-end gap-6">
                 <div>
                   <div className="text-xs uppercase tracking-wider text-muted-foreground">Team size</div>
                   <div className="font-display text-4xl font-bold text-foreground">{users}</div>
                 </div>
                 <div>
-                  <div className="text-xs uppercase tracking-wider text-muted-foreground">Monthly</div>
-                  <div className="font-display text-4xl font-bold text-primary">${monthly.toLocaleString()}</div>
+                  <div className="text-xs uppercase tracking-wider text-muted-foreground">Yearly/User</div>
+                  <div className="font-display text-3xl font-bold text-primary">₹{annualPerUser.toLocaleString()}</div>
                 </div>
                 <div>
-                  <div className="text-xs uppercase tracking-wider text-muted-foreground">Annual</div>
-                  <div className="font-display text-2xl font-semibold text-foreground">${(monthly * 12).toLocaleString()}</div>
+                  <div className="text-xs uppercase tracking-wider text-muted-foreground">Annual Total</div>
+                  <div className="font-display text-3xl font-bold text-foreground">₹{totalAnnual.toLocaleString()}</div>
                 </div>
               </div>
+
             </div>
             <div className="rounded-3xl border border-border bg-surface p-6">
-              <div className="text-xs font-semibold uppercase tracking-wider text-primary">Your team</div>
-              <div className="mt-4 flex flex-wrap gap-1.5">
-                {Array.from({ length: Math.min(users, 100) }).map((_, i) => (
-                  <span
-                    key={i}
-                    className="grid h-7 w-7 place-items-center rounded-full text-[10px] font-semibold"
-                    style={{
-                      backgroundColor: `color-mix(in oklab, var(--primary) ${20 + (i / 100) * 60}%, var(--surface))`,
-                      color: i < 30 ? "var(--primary-deep)" : "white",
-                    }}
-                  >
-                    {i + 1}
-                  </span>
-                ))}
+              <div>
+                <div className="text-xs font-semibold uppercase tracking-wider text-primary">Your team</div>
+                <div className="mt-4 flex flex-wrap gap-1.5">
+                  {Array.from({ length: Math.min(users, 100) }).map((_, i) => (
+                    <span
+                      key={i}
+                      className="grid h-7 w-7 place-items-center rounded-full text-[10px] font-semibold"
+                      style={{
+                        backgroundColor: `color-mix(in oklab, var(--primary) ${20 + (i / 100) * 60}%, var(--surface))`,
+                        color: i < 30 ? "var(--primary-deep)" : "white",
+                      }}
+                    >
+                      {i + 1}
+                    </span>
+                  ))}
+                </div>
+                <p className="mt-4 text-xs text-muted-foreground">
+                  Every additional teammate unlocks the same full set of features — no tier upsell.
+                </p>
+
+                 <div className="mt-8 flex justify-end">
+                <button
+                  onClick={() => handleBuy(users)}
+                  className="inline-flex rounded-full bg-primary px-8 py-3.5 text-sm font-semibold text-primary-foreground shadow-sm transition hover:bg-primary-deep"
+                >
+                  Buy Now
+                </button>
               </div>
-              <p className="mt-4 text-xs text-muted-foreground">
-                Every additional teammate unlocks the same full set of features — no tier upsell.
-              </p>
+              </div>
             </div>
           </div>
         </Reveal>
