@@ -6,6 +6,8 @@ import { RootState } from "@/lib/store";
 import { setUsersCount } from "@/lib/features/pricing/pricingSlice";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { Eye, EyeOff, Building2, User, Mail, Phone, Lock, Tag, Users } from "lucide-react";
+import { useCalculatePriceQuery, useRegisterMutation, useVerifyPaymentMutation } from "@/lib/services/authApi";
 
 const loadRazorpay = () => {
   return new Promise((resolve) => {
@@ -20,7 +22,6 @@ const loadRazorpay = () => {
     document.body.appendChild(script);
   });
 };
-import { Eye, EyeOff } from "lucide-react";
 import { Logo } from "@/components/site/Logo";
 
 export default function SignupPage() {
@@ -31,7 +32,7 @@ export default function SignupPage() {
   const [password, setPassword] = useState("");
   const [showPw, setShowPw] = useState(false);
   const [pwFocused, setPwFocused] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+
 
   const initialUsers = useSelector((state: RootState) => state.pricing?.users || 10);
   const dispatch = useDispatch();
@@ -45,7 +46,19 @@ export default function SignupPage() {
     setUsersLocal(val);
     dispatch(setUsersCount(val));
   };
-  const [pricingData, setPricingData] = useState({
+  const [debouncedUsers, setDebouncedUsers] = useState(users);
+  const [appliedPromoCode, setAppliedPromoCode] = useState("");
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedUsers(users);
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [users]);
+
+  const { data: pricingDataResponse, isError, error } = useCalculatePriceQuery({ users: debouncedUsers, promoCode: appliedPromoCode });
+
+  const pricingData = pricingDataResponse || {
     baseAmount: 0,
     discountPercentage: 0,
     discountAmount: 0,
@@ -53,70 +66,46 @@ export default function SignupPage() {
     gstAmount: 0,
     grandTotal: 0,
     pricePerUserYearly: 0
-  });
-
-  useEffect(() => {
-    const timer = setTimeout(async () => {
-      try {
-        const url = `http://localhost:5000/api/v1/auth/calculate-price?users=${users}${promoCode ? `&promo=${promoCode}` : ''}`;
-        const res = await fetch(url);
-        const data = await res.json();
-        if (data.success && data.data) {
-          setPricingData(data.data);
-        }
-      } catch (err) {
-        console.error("Failed to calculate price", err);
-      }
-    }, 300);
-    return () => clearTimeout(timer);
-  }, [users, promoCode]);
+  };
 
   const pricePerUserMonthly = pricingData.pricePerUserYearly > 0 ? pricingData.pricePerUserYearly / 12 : 0;
 
+  const [verifyPayment, { isLoading: isVerifying }] = useVerifyPaymentMutation();
+  const [register, { isLoading: isRegistering }] = useRegisterMutation();
+
+  const handleVerificationSuccess = (data: any) => {
+    localStorage.setItem('accessToken', data.accessToken);
+    localStorage.setItem('refreshToken', data.refreshToken);
+    alert('Payment Successful! Welcome to Proactive.');
+    router.push('/dashboard');
+  };
+
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsLoading(true);
-
+    const username = email.split('@')[0];
+    
     try {
-      const username = email.split('@')[0]; // Simple username generation
-      
-      const res = await fetch('http://localhost:5000/api/v1/auth/register', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          orgName: firmName,
-          name: firstName,
-          username: username,
-          password: password,
-          email: email,
-          mobile: phoneNumber,
-          usersCount: users,
-          promoCode: promoCode
-        })
-      });
+      const data = await register({
+        orgName: firmName,
+        name: firstName,
+        username: username,
+        password: password,
+        email: email,
+        mobile: phoneNumber,
+        usersCount: users,
+        promoCode: appliedPromoCode
+      }).unwrap();
 
-      const data = await res.json();
+      const { orderId, amount, currency } = data;
 
-      console.log(data)
-
-      if (!res.ok) {
-        alert(data.message || 'Registration failed');
-        setIsLoading(false);
-        return;
-      }
-
-      const { orderId, amount, currency } = data.data;
-
-      // Load Razorpay
       const resScript = await loadRazorpay();
       if (!resScript) {
         alert("Razorpay SDK failed to load. Are you online?");
-        setIsLoading(false);
         return;
       }
 
       const options = {
-        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || 'dummy_key', // Ensure this is set in .env.local
+        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || 'dummy_key',
         amount: amount,
         currency: currency,
         name: "Proactive",
@@ -124,55 +113,44 @@ export default function SignupPage() {
         order_id: orderId,
         handler: async function (response: any) {
           try {
-            const verifyRes = await fetch('http://localhost:5000/api/v1/payment/verify', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                razorpay_order_id: response.razorpay_order_id,
-                razorpay_payment_id: response.razorpay_payment_id,
-                razorpay_signature: response.razorpay_signature,
-                orgName: firmName,
-                name: firstName,
-                username: username,
-                password: password,
-                email: email,
-                mobile: phoneNumber
-              })
-            });
-
-            const verifyData = await verifyRes.json();
-            if (verifyRes.ok) {
-              localStorage.setItem('accessToken', verifyData.data.accessToken);
-              localStorage.setItem('refreshToken', verifyData.data.refreshToken);
-              alert('Payment Successful! Welcome to Proactive.');
-              router.push('/dashboard');
-            } else {
-              alert(verifyData.message || 'Payment verification failed');
-            }
-          } catch (err) {
+            const verificationData = await verifyPayment({
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_signature: response.razorpay_signature,
+              orgName: firmName,
+              name: firstName,
+              username: username,
+              password: password,
+              email: email,
+              mobile: phoneNumber
+            }).unwrap();
+            
+            handleVerificationSuccess(verificationData);
+          } catch (err: any) {
             console.error(err);
-            alert('Something went wrong during verification');
+            alert(err.message || 'Something went wrong during verification');
           }
         },
         prefill: {
           name: firstName,
           email: email,
-          contact: phoneNumber.startsWith('+') ? phoneNumber : `+91${phoneNumber}`,
+          contact: phoneNumber?.startsWith('+') ? phoneNumber : `+91${phoneNumber}`,
         },
         theme: {
-          color: "#4f46e5", // Primary color
+          color: "#4f46e5",
         },
       };
 
       const paymentObject = new (window as any).Razorpay(options);
       paymentObject.open();
-    } catch (err) {
+
+    } catch (err: any) {
       console.error(err);
-      alert('An error occurred during registration');
-    } finally {
-      setIsLoading(false);
+      alert(err.message || 'An error occurred during registration');
     }
   };
+
+  const isPending = isRegistering || isVerifying;
 
   return (
     <div className="h-screen w-full bg-primary flex items-center justify-center p-4 sm:p-8 overflow-hidden">
@@ -188,12 +166,12 @@ export default function SignupPage() {
               
               <div className="mb-6">
                 <input
-                  type="range" min={1} max={100} value={users}
+                  type="range" min={5} max={100} value={users}
                   onChange={(e) => handleUsersChange(Number(e.target.value))}
                   className="w-full accent-primary"
                 />
                 <div className="mt-2 flex justify-between text-xs text-muted-foreground">
-                  <span>1</span><span>25</span><span>50</span><span>75</span><span>100</span>
+                  <span>5</span><span>25</span><span>50</span><span>75</span><span>100</span>
                 </div>
               </div>
 
@@ -206,12 +184,12 @@ export default function SignupPage() {
                   <span className="text-muted-foreground">Annual Subtotal</span>
                   <span className="font-semibold text-foreground">₹{pricingData.baseAmount.toLocaleString()}</span>
                 </div>
-                {pricingData.discountAmount > 0 && (
+                {/* {pricingData.discountAmount > 0 && ( */}
                   <div className="flex justify-between text-sm">
                     <span className="text-muted-foreground">Discount ({pricingData.discountPercentage}%)</span>
                     <span className="font-semibold text-green-600">-₹{pricingData.discountAmount.toLocaleString()}</span>
                   </div>
-                )}
+                {/* )} */}
                 <div className="flex justify-between text-sm">
                   <span className="text-muted-foreground">GST (18%)</span>
                   <span className="font-semibold text-foreground">₹{pricingData.gstAmount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
@@ -225,7 +203,11 @@ export default function SignupPage() {
                       placeholder="Promo code"
                       className="w-full bg-transparent border rounded-md border-border focus:border-primary outline-none px-3 py-2 pr-14 text-sm text-foreground placeholder-muted-foreground"
                     />
-                    <button type="button" className="absolute right-3 text-xs font-semibold text-foreground hover:text-muted-foreground">
+                    <button 
+                      type="button" 
+                      onClick={() => setAppliedPromoCode(promoCode)}
+                      className="absolute right-3 text-xs font-semibold text-foreground hover:text-muted-foreground"
+                    >
                       Apply
                     </button>
                   </div>
@@ -353,10 +335,10 @@ export default function SignupPage() {
             <div className="pt-4">
               <button
                 type="submit"
-                disabled={isLoading}
+                disabled={isPending}
                 className="w-full cursor-pointer bg-primary text-primary-foreground rounded-full py-3 font-medium hover:bg-primary-deep transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {isLoading ? "Processing..." : "Proceed to Pay"}
+                {isPending ? "Processing..." : "Proceed to Pay"}
               </button>
             </div>
             

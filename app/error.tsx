@@ -2,7 +2,6 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { reportLovableError } from "@/lib/lovable-error-reporting";
 
 export default function ErrorComponent({
   error,
@@ -15,7 +14,6 @@ export default function ErrorComponent({
   
   useEffect(() => {
     console.error(error);
-    reportLovableError(error, { boundary: "nextjs_root_error_component" });
   }, [error]);
 
   return (
