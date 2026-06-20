@@ -32,7 +32,7 @@ export default function SignupPage() {
   const [password, setPassword] = useState("");
   const [showPw, setShowPw] = useState(false);
   const [pwFocused, setPwFocused] = useState(false);
-
+  const [apiError, setApiError] = useState("");   
 
   const initialUsers = useSelector((state: RootState) => state.pricing?.users || 10);
   const dispatch = useDispatch();
@@ -145,8 +145,16 @@ export default function SignupPage() {
       paymentObject.open();
 
     } catch (err: any) {
-      console.error(err);
-      alert(err.message || 'An error occurred during registration');
+      console.error("Registration error:", err);
+      
+      // Handle RTK Query fetchBaseQuery structured errors
+      if (err?.status === 409 && err?.data?.error?.code === 'USER_EXISTS') {
+        setApiError("USER_EXISTS")
+      } else if (err?.data?.error?.message) {
+        setApiError(err.data.error.message);
+      } else {
+        setApiError(err.message || 'An error occurred during registration. Please try again.');
+      }
     }
   };
 
@@ -294,14 +302,19 @@ export default function SignupPage() {
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder=" "
                 required
-                className="peer w-full bg-transparent border-b border-border focus:border-primary outline-none py-2 text-foreground placeholder-transparent [&:-webkit-autofill]:[box-shadow:0_0_0px_1000px_white_inset]"
+                className={`peer w-full bg-transparent border-b ${apiError === "USER_EXISTS" ? "border-red-500" : "border-border"} focus:border-primary outline-none py-2 text-foreground placeholder-transparent [&:-webkit-autofill]:[box-shadow:0_0_0px_1000px_white_inset]`}
               />
               <label
                 htmlFor="email"
-                className="absolute left-0 -top-1.5 text-xs text-muted-foreground transition-all peer-placeholder-shown:text-sm peer-placeholder-shown:top-3 peer-focus:-top-1.5 peer-focus:text-xs peer-focus:text-foreground peer-autofill:-top-1.5 peer-autofill:text-xs cursor-text"
+                className={`absolute left-0 -top-1.5 text-xs transition-all peer-placeholder-shown:text-sm peer-placeholder-shown:top-3 peer-focus:-top-1.5 peer-focus:text-xs peer-focus:text-foreground peer-autofill:-top-1.5 peer-autofill:text-xs cursor-text`}
               >
                 Work Email
               </label>
+              {
+                apiError === "USER_EXISTS" && (
+                  <span className="text-red-500 text-sm">User already exists. Please login instead.</span>
+                )
+              }
             </div>
 
             <div className="relative pt-3 mt-2">
