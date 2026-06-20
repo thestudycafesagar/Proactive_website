@@ -9,6 +9,7 @@ import { IconBadge } from "@/components/site/IconBadge";
 import { FinalCTA } from "@/components/site/FinalCTA";
 import { CountUp } from "@/components/site/CountUp";
 import { Reveal } from "@/components/site/Reveal";
+import { FeaturesScroll } from "@/components/site/FeaturesScroll";
 
 import heroImg from "@/assets/hero-devices.jpg";
 import tasksImg from "@/assets/feature-tasks.jpg";
@@ -19,11 +20,11 @@ import webappImg from "@/assets/feature-webapp.jpg";
 import reportsImg from "@/assets/feature-reports.jpg";
 
 export const metadata = {
-  title: "StudyCafe — The Office OS for Modern CAs & Accountants",
-  description: "Automate your firm with StudyCafe: smart task management, billing, communication, documents and reporting built for CAs.",
+  title: "Proactive — The Office OS for Modern CAs & Accountants",
+  description: "Automate your firm with Proactive: smart task management, billing, communication, documents and reporting built for CAs.",
   openGraph: {
-    title: "StudyCafe — The Office OS for Modern CAs & Accountants",
-    description: "Automate your firm with StudyCafe: smart task management, billing, communication and reporting.",
+    title: "Proactive — The Office OS for Modern CAs & Accountants",
+    description: "Automate your firm with Proactive: smart task management, billing, communication and reporting.",
     type: "website",
   },
 };
@@ -102,7 +103,7 @@ export default function HomePage() {
               The Office OS for <span className="text-primary">Modern CAs</span> & Accountants.
             </h1>
             <p className="mt-5 max-w-xl text-lg text-muted-foreground">
-              StudyCafe is the practice management platform that replaces ten tools, twenty spreadsheets, and a hundred follow-up calls.
+              Proactive is the practice management platform that replaces ten tools, twenty spreadsheets, and a hundred follow-up calls.
             </p>
             <ul className="mt-6 grid gap-3 sm:grid-cols-3">
               {heroBullets.map((b) => (
@@ -115,8 +116,8 @@ export default function HomePage() {
               ))}
             </ul>
             <div className="mt-8 flex flex-wrap gap-3">
-              <a href="#trial" className="inline-flex items-center gap-2 rounded-full bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground shadow-elegant transition hover:bg-primary-deep">
-                Start Free Trial <ArrowUpRight className="h-4 w-4" />
+              <a href="/signup" className="inline-flex items-center gap-2 rounded-full bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground shadow-elegant transition hover:bg-primary-deep">
+                Get started <ArrowUpRight className="h-4 w-4" />
               </a>
               <a href="#demo" className="inline-flex items-center gap-2 rounded-full border border-foreground/15 bg-surface px-6 py-3 text-sm font-semibold text-foreground transition hover:border-primary hover:text-primary">
                 Watch 2-min demo
@@ -127,7 +128,7 @@ export default function HomePage() {
             <div className="absolute -inset-6 rounded-[2rem] gradient-blue opacity-15 blur-3xl" aria-hidden />
             <Image
               src={heroImg}
-              alt="StudyCafe dashboard on laptop, tablet and phone"
+              alt="Proactive dashboard on laptop, tablet and phone"
               width={1280}
               height={1024}
               className="relative animate-float rounded-3xl object-cover shadow-float"
@@ -139,7 +140,7 @@ export default function HomePage() {
         {/* Trusted by */}
         <div className="container-page relative pb-16">
           <p className="text-center text-sm font-medium text-muted-foreground">
-            Join <span className="font-semibold text-foreground">2,000+ CA Firms</span> that trust StudyCafe.
+            Join <span className="font-semibold text-foreground">2,000+ CA Firms</span> that trust Proactive.
           </p>
           <div className="mt-6 mask-fade-x overflow-hidden">
             <div className="flex w-max animate-marquee gap-12 py-2">
@@ -179,46 +180,8 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* IMMERSIVE FEATURE BLOCKS */}
-      {features.map((f, i) => {
-        const tint = i % 2 === 0 ? "bg-primary-deep text-primary-foreground" : "bg-surface-strong text-foreground";
-        const subText = i % 2 === 0 ? "text-primary-foreground/75" : "text-muted-foreground";
-        return (
-          <section key={f.title} className={`relative overflow-hidden ${tint}`}>
-            {i % 2 === 0 && <div className="absolute inset-0 gradient-blue opacity-90" aria-hidden />}
-            {i % 2 === 0 && <div className="absolute inset-0 grid-architectural opacity-20" aria-hidden />}
-            <div className={`container-page relative grid items-center gap-12 py-16 lg:grid-cols-2 ${f.reverse ? "lg:[&>div:first-child]:order-2" : ""}`}>
-              <Reveal>
-                <span className={`text-xs font-semibold uppercase tracking-[0.2em] ${i % 2 === 0 ? "text-accent-blue" : "text-primary"}`}>
-                  {f.eyebrow}
-                </span>
-                <h2 className="mt-3 font-display text-4xl font-bold leading-tight sm:text-1xl text-balance">{f.title}</h2>
-                <p className={`mt-4 max-w-xl text-lg ${subText}`}>{f.body}</p>
-                <ul className="mt-6 space-y-3">
-                  {f.points.map((p) => (
-                    <li key={p} className="flex items-start gap-3">
-                      <span className={`mt-1 grid h-5 w-5 place-items-center rounded-full ${i % 2 === 0 ? "bg-accent-blue/20 text-accent-blue" : "bg-primary/10 text-primary"}`}>
-                        <svg viewBox="0 0 24 24" className="h-3 w-3" fill="none" stroke="currentColor" strokeWidth="3"><path d="M5 13l4 4L19 7" /></svg>
-                      </span>
-                      <span className="text-base">{p}</span>
-                    </li>
-                  ))}
-                </ul>
-              </Reveal>
-              <Reveal delay={120} className="relative">
-                <div className={`absolute -inset-4 rounded-3xl ${i % 2 === 0 ? "bg-accent-blue/20" : "bg-primary/10"} blur-2xl`} aria-hidden />
-                <Image
-                  src={f.img}
-                  alt={f.title}
-                  width={1280}
-                  height={896}
-                  className="relative rounded-3xl object-cover shadow-float"
-                />
-              </Reveal>
-            </div>
-          </section>
-        );
-      })}
+      {/* STICKY MEDIA SCROLL */}
+      <FeaturesScroll features={features} />
 
       {/* SECURITY */}
       <section className="container-page py-16">
@@ -254,7 +217,7 @@ export default function HomePage() {
               </div>
             </div>
             <blockquote className="font-display text-2xl font-medium leading-snug text-foreground sm:text-3xl text-balance">
-              {`"We replaced four tools with StudyCafe in the first month. By month three our team was billing 22% more hours with the same headcount — because nothing slipped between the cracks anymore."`}
+              {`"We replaced four tools with Proactive in the first month. By month three our team was billing 22% more hours with the same headcount — because nothing slipped between the cracks anymore."`}
             </blockquote>
           </div>
         </Reveal>

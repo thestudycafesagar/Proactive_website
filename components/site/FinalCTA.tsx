@@ -4,7 +4,7 @@ import ctaImg from "@/assets/final-cta-dashboard.jpg";
 export function FinalCTA({
   eyebrow = "Ready to grow?",
   title = "Run a sharper firm. Starting this week.",
-  body = "Join 2,000+ Chartered Accountants who replaced spreadsheets, sticky notes, and chase-up calls with StudyCafe.",
+  body = "Join 2,000+ Chartered Accountants who replaced spreadsheets, sticky notes, and chase-up calls with Proactive.",
 }: { eyebrow?: string; title?: string; body?: string }) {
   return (
     <section className="relative overflow-hidden py-16">
@@ -18,8 +18,8 @@ export function FinalCTA({
           <h2 className="mt-4 font-display text-3xl font-bold leading-tight text-foreground sm:text-4xl text-balance">{title}</h2>
           <p className="mt-4 max-w-xl text-lg text-muted-foreground">{body}</p>
           <div className="mt-8 flex flex-wrap gap-3">
-            <a href="#trial" className="rounded-full bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground shadow-elegant transition hover:bg-primary-deep">
-              Start Free Trial
+            <a href="/signup" className="rounded-full bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground shadow-elegant transition hover:bg-primary-deep">
+              Get started
             </a>
             <a href="/pricing" className="rounded-full border border-foreground/15 bg-surface px-6 py-3 text-sm font-semibold text-foreground transition hover:border-primary hover:text-primary">
               View Pricing

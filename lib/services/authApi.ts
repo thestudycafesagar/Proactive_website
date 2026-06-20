@@ -42,6 +42,22 @@ export const authApi = createApi({
       }),
       transformResponse: (response: { data: any }) => response.data,
     }),
+    sendOtp: builder.mutation({
+      query: (payload: { email: string }) => ({
+        url: '/auth/send-otp',
+        method: 'POST',
+        body: payload,
+      }),
+      transformResponse: (response: { data: any }) => response.data,
+    }),
+    verifyOtp: builder.mutation({
+      query: (payload: { email: string; otp: string }) => ({
+        url: '/auth/verify-otp',
+        method: 'POST',
+        body: payload,
+      }),
+      transformResponse: (response: { data: any }) => response.data,
+    }),
   }),
 });
 
@@ -49,4 +65,6 @@ export const {
   useCalculatePriceQuery,
   useRegisterMutation,
   useVerifyPaymentMutation,
+  useSendOtpMutation,
+  useVerifyOtpMutation,
 } = authApi;

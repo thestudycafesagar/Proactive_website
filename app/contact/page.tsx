@@ -3,7 +3,7 @@ import { Smile, MessageCircle, Phone, MapPin } from "lucide-react";
 import { FinalCTA } from "@/components/site/FinalCTA";
 
 export const metadata = {
-  title: "Contact Us — StudyCafe",
+  title: "Contact Us — Proactive",
   description: "Reach out to us for sales, support, or general questions.",
 };
 
@@ -12,7 +12,7 @@ const contactMethods = [
     icon: Smile,
     title: "Sales Enquiries",
     desc: "Speak to our friendly team",
-    detail: "sales@studycafe.in",
+    detail: "sales@Proactive.in",
     iconColor: "text-blue-500",
     iconBg: "bg-blue-500/10",
   },
@@ -20,7 +20,7 @@ const contactMethods = [
     icon: MessageCircle,
     title: "Customer Support",
     desc: "We're here to help",
-    detail: "help@studycafe.in",
+    detail: "help@Proactive.in",
     iconColor: "text-blue-500",
     iconBg: "bg-blue-500/10",
   },
@@ -70,7 +70,7 @@ export default function ContactPage() {
                 </div>
               ))}
             </div>
-            
+
             {/* ADDRESS CARD */}
             <div className="rounded-xl border border-border bg-surface p-6 shadow-sm">
               <div className="mb-4 inline-flex h-10 w-10 items-center justify-center rounded-full bg-blue-500/10 text-blue-500">
@@ -94,37 +94,37 @@ export default function ContactPage() {
                   <label htmlFor="name" className="mb-2 block text-sm font-medium text-foreground">
                     Your Name *
                   </label>
-                  <input 
-                    type="text" 
+                  <input
+                    type="text"
                     id="name"
-                    placeholder="Enter your full name" 
+                    placeholder="Enter your full name"
                     className="w-full rounded-md border border-border bg-background px-4 py-2.5 text-sm text-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
                     required
                   />
                 </div>
-                
+
                 <div>
                   <label htmlFor="email" className="mb-2 block text-sm font-medium text-foreground">
                     Email Address *
                   </label>
-                  <input 
-                    type="email" 
+                  <input
+                    type="email"
                     id="email"
-                    placeholder="Enter email address" 
+                    placeholder="Enter email address"
                     className="w-full rounded-md border border-border bg-background px-4 py-2.5 text-sm text-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
                     required
                   />
                 </div>
-                
+
                 <div>
                   <label htmlFor="mobile" className="mb-2 block text-sm font-medium text-foreground">
                     Mobile Number *
                   </label>
                   <div className="relative">
-                    <input 
-                      type="tel" 
+                    <input
+                      type="tel"
                       id="mobile"
-                      placeholder="Enter 10 digit mobile number" 
+                      placeholder="Enter 10 digit mobile number"
                       className="w-full rounded-md border border-border bg-background px-4 py-2.5 pr-12 text-sm text-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
                       required
                     />
@@ -139,17 +139,17 @@ export default function ContactPage() {
                   <label htmlFor="message" className="mb-2 block text-sm font-medium text-foreground">
                     Message
                   </label>
-                  <textarea 
+                  <textarea
                     id="message"
                     rows={4}
-                    placeholder="Enter your message..." 
+                    placeholder="Enter your message..."
                     className="w-full rounded-md border border-border bg-background px-4 py-2.5 text-sm text-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
                   />
                   <p className="mt-1 text-right text-xs text-muted-foreground">0 / 180</p>
                 </div>
 
-                <button 
-                  type="submit" 
+                <button
+                  type="submit"
                   className="rounded-md bg-primary px-6 py-2.5 text-sm font-medium text-primary-foreground hover:bg-primary-deep transition-colors"
                 >
                   Submit

@@ -16,10 +16,10 @@ import webappImg from "@/assets/feature-webapp.jpg";
 import reportsImg from "@/assets/feature-reports.jpg";
 
 export const metadata = {
-  title: "Solutions — StudyCafe for CA & Accounting Firms",
+  title: "Solutions — Proactive for CA & Accounting Firms",
   description: "Purpose-built solutions for multi-entity CA firms, small teams, and growing practices. Automate billing, workflow, and client follow-up.",
   openGraph: {
-    title: "Solutions — StudyCafe",
+    title: "Solutions — Proactive",
     description: "Solutions purpose-built for modern CA & accounting firms of every size.",
   },
 };
@@ -49,7 +49,7 @@ const blocks = [
   {
     eyebrow: "Automated Compliance",
     title: "Compliance that schedules itself.",
-    body: "Pick the filings each client needs once. StudyCafe spins up the right task on the right cadence — GST, TDS, ROC, Income Tax — and assigns it to the right associate.",
+    body: "Pick the filings each client needs once. Proactive spins up the right task on the right cadence — GST, TDS, ROC, Income Tax — and assigns it to the right associate.",
     img: tasksImg,
     bullets: ["47+ pre-built filing templates", "Auto-assignment by skill & load", "Government calendar synced"],
   },
@@ -70,14 +70,14 @@ const blocks = [
   {
     eyebrow: "Useful Tools, Built In",
     title: "The little utilities your team Googles every day.",
-    body: "GST calculators, TDS rate finders, mileage logs, and a built-in IT-return checklist — all inside StudyCafe, all linked to the right client record.",
+    body: "GST calculators, TDS rate finders, mileage logs, and a built-in IT-return checklist — all inside Proactive, all linked to the right client record.",
     img: webappImg,
     bullets: ["GST, TDS & advance tax calculators", "Client-linked time & mileage logs", "Pre-flight return checklists"],
   },
   {
     eyebrow: "Payment Reminders",
     title: "Receivables that collect themselves.",
-    body: "Configure the cadence once — a soft nudge on day three, a firm reminder on day fifteen, a partner alert on day thirty. StudyCafe sends them in your brand voice.",
+    body: "Configure the cadence once — a soft nudge on day three, a firm reminder on day fifteen, a partner alert on day thirty. Proactive sends them in your brand voice.",
     img: commsImg,
     bullets: ["Tone-tunable reminder templates", "WhatsApp + email delivery", "One-click payment links"],
   },
@@ -107,7 +107,7 @@ export default function SolutionsPage() {
               The best solution for the way modern firms work.
             </h1>
             <p className="mt-4 max-w-xl text-lg text-muted-foreground">
-              Whether you bill from one entity or seven, run a five-person team or fifty, StudyCafe fits the shape of your practice — not the other way around.
+              Whether you bill from one entity or seven, run a five-person team or fifty, Proactive fits the shape of your practice — not the other way around.
             </p>
             <ul className="mt-6 grid gap-2 sm:grid-cols-2">
               {benefits.map((b) => (
@@ -118,7 +118,7 @@ export default function SolutionsPage() {
               ))}
             </ul>
             <div className="mt-8 flex flex-wrap gap-3">
-              <a href="#trial" className="rounded-full bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground shadow-elegant transition hover:bg-primary-deep">Start Free Trial</a>
+              <a href="/signup" className="rounded-full bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground shadow-elegant transition hover:bg-primary-deep">Get started</a>
               <a href="/features" className="rounded-full border border-foreground/15 bg-surface px-6 py-3 text-sm font-semibold text-foreground transition hover:border-primary hover:text-primary">Explore Features</a>
             </div>
           </div>
@@ -187,7 +187,7 @@ export default function SolutionsPage() {
         </div>
       </section>
 
-      <FinalCTA eyebrow="See it on your firm" title="Bring TaskTracker24 to your practice this week." body="A 14-day trial, full access, no credit card." />
+      <FinalCTA eyebrow="See it on your firm" title="Bring Proactive to your practice this week." body="A 14-day trial, full access, no credit card." />
     </SiteShell>
   );
 }

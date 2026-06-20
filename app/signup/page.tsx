@@ -6,8 +6,9 @@ import { RootState } from "@/lib/store";
 import { setUsersCount } from "@/lib/features/pricing/pricingSlice";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Eye, EyeOff, Building2, User, Mail, Phone, Lock, Tag, Users } from "lucide-react";
-import { useCalculatePriceQuery, useRegisterMutation, useVerifyPaymentMutation } from "@/lib/services/authApi";
+import { Eye, EyeOff, Building2, User, Mail, Phone, Lock, Tag, Users, CheckCircle2 } from "lucide-react";
+import { useCalculatePriceQuery, useRegisterMutation, useVerifyPaymentMutation, useSendOtpMutation, useVerifyOtpMutation } from "@/lib/services/authApi";
+import { motion, AnimatePresence } from "framer-motion";
 
 const loadRazorpay = () => {
   return new Promise((resolve) => {
@@ -22,6 +23,7 @@ const loadRazorpay = () => {
     document.body.appendChild(script);
   });
 };
+
 import { Logo } from "@/components/site/Logo";
 
 export default function SignupPage() {
@@ -33,6 +35,50 @@ export default function SignupPage() {
   const [showPw, setShowPw] = useState(false);
   const [pwFocused, setPwFocused] = useState(false);
   const [apiError, setApiError] = useState("");   
+  const [otp, setOtp] = useState("");
+  const [isOtpSent, setIsOtpSent] = useState(false);
+  const [isEmailVerified, setIsEmailVerified] = useState(false);
+  const [resendTimer, setResendTimer] = useState(0);
+
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    if (resendTimer > 0) {
+      interval = setInterval(() => {
+        setResendTimer((prev) => prev - 1);
+      }, 1000);
+    }
+    return () => clearInterval(interval);
+  }, [resendTimer]);
+
+  const isEmailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+
+  const [sendOtpApi, { isLoading: isSendingOtp }] = useSendOtpMutation();
+  const [verifyOtpApi, { isLoading: isVerifyingOtp }] = useVerifyOtpMutation();
+
+  const handleSendOtp = async () => {
+    
+    if (!isEmailValid) return;
+    try {
+      setApiError("");
+      const response = await sendOtpApi({ email }).unwrap();
+      console.log("Send OTP response:", response);
+      setIsOtpSent(true);
+      setResendTimer(30);
+    } catch (err: any) {
+      setApiError(err?.data?.error?.message || err?.message || "Failed to send OTP.");
+    }
+  };
+
+  const handleVerifyOtp = async () => {
+    if (otp.length < 4) return;
+    try {
+      setApiError("");
+      await verifyOtpApi({ email, otp }).unwrap();
+      setIsEmailVerified(true);
+    } catch (err: any) {
+      setApiError(err?.data?.error?.message || err?.message || "Invalid OTP.");
+    }
+  };
 
   const initialUsers = useSelector((state: RootState) => state.pricing?.users || 10);
   const dispatch = useDispatch();
@@ -57,6 +103,8 @@ export default function SignupPage() {
   }, [users]);
 
   const { data: pricingDataResponse, isError, error } = useCalculatePriceQuery({ users: debouncedUsers, promoCode: appliedPromoCode });
+
+  console.log("pricingDataResponse",pricingDataResponse)
 
   const pricingData = pricingDataResponse || {
     baseAmount: 0,
@@ -161,8 +209,8 @@ export default function SignupPage() {
   const isPending = isRegistering || isVerifying;
 
   return (
-    <div className="h-screen w-full bg-primary flex items-center justify-center p-4 sm:p-8 overflow-hidden">
-      <div className="w-full max-w-5xl h-full max-h-[90vh] md:max-h-162.5 grid md:grid-cols-2 rounded-3xl overflow-hidden bg-surface border border-border shadow-2xl relative">
+    <div className="h-screen w-full bg-primary flex items-center justify-center overflow-hidden">
+      <div className="w-full h-full grid md:grid-cols-2 overflow-hidden bg-surface border border-border shadow-2xl relative">
         {/* Left: Pricing Calculator */}
         <div className="bg-surface-strong hidden md:flex flex-col items-center justify-center p-8 pb-12 relative">
           <div className="max-w-md w-full">
@@ -232,92 +280,136 @@ export default function SignupPage() {
 
         {/* Right: Form */}
         <div className="bg-surface p-6 sm:p-6 lg:py-6 lg:px-16 flex flex-col overflow-y-auto">
-          <div className="flex justify-center mb-6">
+          <div className="flex flex-col items-center text-center mb-6">
             <Logo />
+            <h1 className="mt-6 font-display text-2xl font-bold text-foreground">Create your account</h1>
+            <p className="mt-2 text-sm text-muted-foreground">Enter your details to get started with Proactive.</p>
           </div>
 
-          <form onSubmit={onSubmit} className="mt-4 space-y-4">
+          <form onSubmit={onSubmit} className="mt-6 space-y-4">
             <div className="grid grid-cols-2 gap-4">
-              <div className="relative pt-3 mt-2">
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-muted-foreground/70">
+                  <User size={18} />
+                </div>
                 <input
                   id="firstName"
                   type="text"
                   value={firstName}
                   onChange={(e) => setFirstName(e.target.value)}
-                  placeholder=" "
+                  placeholder="Full Name"
                   required
-                  className="peer w-full bg-transparent border-b border-border focus:border-primary outline-none py-2 text-foreground placeholder-transparent [&:-webkit-autofill]:[box-shadow:0_0_0px_1000px_white_inset]"
+                  className="w-full bg-surface border border-border focus:border-primary rounded-full outline-none py-3 pl-11 pr-4 text-sm text-foreground placeholder-muted-foreground/70 transition-colors"
                 />
-                <label
-                  htmlFor="firstName"
-                  className="absolute left-0 -top-1.5 text-xs text-muted-foreground transition-all peer-placeholder-shown:text-sm peer-placeholder-shown:top-3 peer-focus:-top-1.5 peer-focus:text-xs peer-focus:text-foreground peer-autofill:-top-1.5 peer-autofill:text-xs cursor-text"
-                >
-                  Full Name
-                </label>
               </div>
 
-              <div className="relative pt-3 mt-2">
-                <span className="absolute left-0 bottom-2 text-foreground text-[15px] pointer-events-none">+91</span>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-muted-foreground/70">
+                  <Phone size={18} />
+                  <span className="ml-1 text-sm">+91</span>
+                </div>
                 <input
                   id="phoneNumber"
                   type="tel"
                   value={phoneNumber}
                   onChange={(e) => setPhoneNumber(e.target.value.replace(/\D/g, '').slice(0, 10))}
-                  placeholder=" "
+                  placeholder="Phone Number"
                   required
-                  className="peer w-full bg-transparent border-b border-border focus:border-primary outline-none py-2 pl-9 text-foreground placeholder-transparent [&:-webkit-autofill]:[box-shadow:0_0_0px_1000px_white_inset]"
+                  className="w-full bg-surface border border-border focus:border-primary rounded-full outline-none py-3 pl-[4.5rem] pr-4 text-sm text-foreground placeholder-muted-foreground/70 transition-colors"
                 />
-                <label
-                  htmlFor="phoneNumber"
-                  className="absolute left-0 -top-1.5 text-xs text-muted-foreground transition-all peer-placeholder-shown:text-sm peer-placeholder-shown:top-3 peer-placeholder-shown:left-9 peer-focus:-top-1.5 peer-focus:left-0 peer-focus:text-xs peer-focus:text-foreground peer-autofill:-top-1.5 peer-autofill:left-0 peer-autofill:text-xs cursor-text"
-                >
-                  Phone Number
-                </label>
               </div>
             </div>
 
-            <div className="relative pt-3 mt-2">
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-muted-foreground/70">
+                <Building2 size={18} />
+              </div>
               <input
                 id="firmName"
                 type="text"
                 value={firmName}
                 onChange={(e) => setFirmName(e.target.value)}
-                placeholder=" "
+                placeholder="Firm Name"
                 required
-                className="peer w-full bg-transparent border-b border-border focus:border-primary outline-none py-2 text-foreground placeholder-transparent [&:-webkit-autofill]:[box-shadow:0_0_0px_1000px_white_inset]"
+                className="w-full bg-surface border border-border focus:border-primary rounded-full outline-none py-3 pl-11 pr-4 text-sm text-foreground placeholder-muted-foreground/70 transition-colors"
               />
-              <label
-                htmlFor="firmName"
-                className="absolute left-0 -top-1.5 text-xs text-muted-foreground transition-all peer-placeholder-shown:text-sm peer-placeholder-shown:top-3 peer-focus:-top-1.5 peer-focus:text-xs peer-focus:text-foreground peer-autofill:-top-1.5 peer-autofill:text-xs cursor-text"
-              >
-                Firm Name
-              </label>
             </div>
 
-            <div className="relative pt-3 mt-2">
-              <input
-                id="email"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder=" "
-                required
-                className={`peer w-full bg-transparent border-b ${apiError === "USER_EXISTS" ? "border-red-500" : "border-border"} focus:border-primary outline-none py-2 text-foreground placeholder-transparent [&:-webkit-autofill]:[box-shadow:0_0_0px_1000px_white_inset]`}
-              />
-              <label
-                htmlFor="email"
-                className={`absolute left-0 -top-1.5 text-xs transition-all peer-placeholder-shown:text-sm peer-placeholder-shown:top-3 peer-focus:-top-1.5 peer-focus:text-xs peer-focus:text-foreground peer-autofill:-top-1.5 peer-autofill:text-xs cursor-text`}
-              >
-                Work Email
-              </label>
-              {
-                apiError === "USER_EXISTS" && (
-                  <span className="text-red-500 text-sm">User already exists. Please login instead.</span>
-                )
-              }
-            </div>
+            <div className="flex flex-col">
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-muted-foreground/70">
+                  <Mail size={18} />
+                </div>
+                <input
+                  id="email"
+                  type="email"
+                  value={email}
+                  onChange={(e) => { setEmail(e.target.value); setIsOtpSent(false); setIsEmailVerified(false); }}
+                  disabled={isEmailVerified}
+                  placeholder="Email id"
+                  required
+                  className={`w-full bg-surface border ${apiError === "USER_EXISTS" ? "border-red-500" : "border-border"} focus:border-primary rounded-full outline-none py-3 pl-11 pr-[100px] text-sm text-foreground placeholder-muted-foreground/70 transition-colors ${isEmailVerified ? "opacity-70 bg-surface-strong" : ""}`}
+                />
+                {!isEmailVerified && (
+                  <button
+                    type="button"
+                    onClick={handleSendOtp}
+                    disabled={!isEmailValid || isSendingOtp || resendTimer > 0}
+                    className="absolute cursor-pointer right-1.5 top-1.5 bottom-1.5 px-4 bg-primary text-primary-foreground text-xs font-semibold rounded-full hover:bg-primary-deep transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {isSendingOtp ? "Sending..." : resendTimer > 0 ? `Resend in ${resendTimer}s` : isOtpSent ? "Resend OTP" : "Send OTP"}
+                  </button>
+                )}
+                {isEmailVerified && (
+                  <div className="absolute right-4 top-1/2 -translate-y-1/2 text-green-600 font-semibold text-xs flex items-center gap-1">
+                    <CheckCircle2 size={16} /> Verified
+                  </div>
+                )}
+                {
+                  apiError === "USER_EXISTS" && (
+                    <span className="absolute -bottom-5 left-4 text-red-500 text-xs">User already exists. Please login instead.</span>
+                  )
+                }
+              </div>
 
-            <div className="relative pt-3 mt-2">
+              <AnimatePresence>
+                {isOtpSent && !isEmailVerified && (
+                  <motion.div 
+                    initial={{ opacity: 0, height: 0, marginTop: 0 }}
+                    animate={{ opacity: 1, height: "auto", marginTop: 16 }}
+                    exit={{ opacity: 0, height: 0, marginTop: 0 }}
+                    transition={{ duration: 0.2, ease: "easeInOut" }}
+                    className="relative overflow-hidden"
+                  >
+                    <input
+                      type="text"
+                      value={otp}
+                      onChange={(e) => setOtp(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                      placeholder="Enter 6-digit OTP"
+                      className="w-full bg-surface border border-border focus:border-primary rounded-full outline-none py-3 pl-5 pr-[100px] text-sm text-foreground placeholder-muted-foreground/70 transition-colors"
+                    />
+                    <button
+                      type="button"
+                      onClick={handleVerifyOtp}
+                      disabled={otp.length < 4 || isVerifyingOtp}
+                      className="absolute right-1.5 top-1.5 bottom-1.5 px-4 bg-primary text-white cursor-pointer text-xs font-semibold rounded-full hover:brightness-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      {isVerifyingOtp ? "Verifying..." : "Verify"}
+                    </button>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+            
+            {/* Show any OTP-specific errors right below the group if they exist */}
+            {apiError && apiError !== "USER_EXISTS" && (
+              <div className="text-red-500 text-xs mt-1 ml-4">{apiError}</div>
+            )}
+
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-muted-foreground/70">
+                <Lock size={18} />
+              </div>
               <input
                 id="password"
                 type={showPw ? "text" : "password"}
@@ -325,20 +417,14 @@ export default function SignupPage() {
                 onChange={(e) => setPassword(e.target.value)}
                 onFocus={() => setPwFocused(true)}
                 onBlur={() => setPwFocused(false)}
-                placeholder=" "
+                placeholder="Password"
                 required
-                className="peer w-full bg-transparent border-b border-border focus:border-primary outline-none py-2 pr-8 text-foreground placeholder-transparent [&:-webkit-autofill]:[box-shadow:0_0_0px_1000px_white_inset]"
+                className="w-full bg-surface border border-border focus:border-primary rounded-full outline-none py-3 pl-11 pr-12 text-sm text-foreground placeholder-muted-foreground/70 transition-colors"
               />
-              <label
-                htmlFor="password"
-                className={`absolute left-0 -top-1.5 text-xs transition-all peer-placeholder-shown:text-sm peer-placeholder-shown:top-3 peer-focus:-top-1.5 peer-focus:text-xs peer-autofill:-top-1.5 peer-autofill:text-xs cursor-text text-muted-foreground peer-focus:text-foreground`}
-              >
-                Password
-              </label>
               <button
                 type="button"
                 onClick={() => setShowPw((v) => !v)}
-                className="absolute right-0 top-3 text-muted-foreground hover:text-foreground z-10"
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground/70 hover:text-foreground z-10 transition-colors"
                 aria-label="Toggle password visibility"
               >
                 {showPw ? <EyeOff size={18} /> : <Eye size={18} />}
@@ -348,7 +434,7 @@ export default function SignupPage() {
             <div className="pt-4">
               <button
                 type="submit"
-                disabled={isPending}
+                disabled={isPending || !isEmailVerified}
                 className="w-full cursor-pointer bg-primary text-primary-foreground rounded-full py-3 font-medium hover:bg-primary-deep transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isPending ? "Processing..." : "Proceed to Pay"}
@@ -356,7 +442,7 @@ export default function SignupPage() {
             </div>
             
             <p className="text-center text-xs text-muted-foreground/80 mt-4">
-              By signing up, you agree to our <a href="#" className="underline hover:text-foreground">Terms of Service</a> and <a href="#" className="underline hover:text-foreground">Privacy Policy</a>.
+              By signing up, you agree to our <a href="/terms" target="_blank" className="underline hover:text-foreground">Terms of Service</a> and <a href="/privacy" target="_blank" className="underline hover:text-foreground">Privacy Policy</a>.
             </p>
           </form>
 

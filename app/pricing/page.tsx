@@ -53,7 +53,7 @@ const faqs = [
   { q: "Can I switch plans later?", a: "Anytime, in both directions. Upgrades are prorated; downgrades take effect at the next billing cycle." },
   { q: "How are users counted?", a: "A user is any team member with login access. Clients and external collaborators are free and unlimited on every plan." },
   { q: "Do you support multi-entity billing?", a: "Yes — multi-entity billing is included on the Scale plan and lets you bill from any number of GST-registered entities." },
-  { q: "What about data security?", a: "StudyCafe runs on AWS with end-to-end encryption, single-tenant data isolation, and SOC2-aligned controls. We never train on your data." },
+  { q: "What about data security?", a: "Proactive runs on AWS with end-to-end encryption, single-tenant data isolation, and SOC2-aligned controls. We never train on your data." },
   { q: "Do you offer a partner programme?", a: "Yes. Implementation partners get co-marketing, certification, and revenue share. Contact our partnerships team for details." },
 ];
 
@@ -92,6 +92,8 @@ export default function PricingPage() {
             Pick a plan that matches your firm today. Change it the moment you outgrow it. No hidden setup fees, ever.
           </p>
         </div>
+        {/* Wide blur divider for smooth transition */}
+        <div className="absolute bottom-0 left-0 right-0 h-48 bg-linear-to-t from-background via-background/10 to-transparent pointer-events-none" aria-hidden />
       </section>
 
       {/* Tiers */}
@@ -118,7 +120,7 @@ export default function PricingPage() {
                 <span className="font-display text-4xl font-bold">₹{t.price}</span>
                 <span className={`text-sm ${t.featured ? "text-primary-foreground/75" : "text-muted-foreground"}`}>/ user / month</span>
               </div>
-              <ul className="mt-6 space-y-2.5">
+              <ul className="my-6 space-y-2.5">
                 {t.perks.map((p) => (
                   <li key={p} className="flex items-start gap-2 text-sm">
                     <Check className={`mt-0.5 h-4 w-4 shrink-0 ${t.featured ? "text-accent-blue" : "text-primary"}`} />
@@ -128,7 +130,7 @@ export default function PricingPage() {
               </ul>
               <button
                 onClick={() => handleBuy(t.defaultUsers)}
-                className={`mt-8 w-full rounded-full px-5 py-3 text-center text-sm font-semibold transition ${t.featured
+                className={`mt-auto w-full rounded-full px-5 py-3 text-center text-sm font-semibold transition ${t.featured
                   ? "bg-accent-blue text-primary-deep hover:brightness-95"
                   : "bg-primary text-primary-foreground hover:bg-primary-deep"
                   }`}
@@ -203,14 +205,14 @@ export default function PricingPage() {
                   Every additional teammate unlocks the same full set of features — no tier upsell.
                 </p>
 
-                 <div className="mt-8 flex justify-end">
-                <button
-                  onClick={() => handleBuy(users)}
-                  className="inline-flex rounded-full bg-primary px-8 py-3.5 text-sm font-semibold text-primary-foreground shadow-sm transition hover:bg-primary-deep"
-                >
-                  Buy Now
-                </button>
-              </div>
+                <div className="mt-8 flex justify-end">
+                  <button
+                    onClick={() => handleBuy(users)}
+                    className="inline-flex rounded-full bg-primary px-8 py-3.5 text-sm font-semibold text-primary-foreground shadow-sm transition hover:bg-primary-deep"
+                  >
+                    Buy Now
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -297,7 +299,8 @@ export default function PricingPage() {
         </div>
       </section>
 
-      <FinalCTA eyebrow="Try TaskTracker24 free" title="Pick a plan. Or just kick the tyres." body="Full access for 14 days, no credit card. We'll never auto-charge you." />
+      <FinalCTA eyebrow="Try Proactive free" title="Pick a plan. Or just kick the tyres." body="Full access for 14 days, no credit card. We'll never auto-charge you." />
+
     </SiteShell>
   );
 }

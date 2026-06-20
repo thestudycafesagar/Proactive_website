@@ -1,15 +1,15 @@
 import { SiteShell } from "@/components/site/SiteShell";
 import { FinalCTA } from "@/components/site/FinalCTA";
-import { 
-  Receipt, Users, Mail, FolderOpen, LayoutGrid, 
-  Settings, CheckSquare, User, Globe, FileText, 
-  Search, Plus, ChevronRight 
+import {
+  Receipt, Users, Mail, FolderOpen, LayoutGrid,
+  Settings, CheckSquare, User, Globe, FileText,
+  Search, Plus, ChevronRight
 } from "lucide-react";
 import { Logo } from "@/components/site/Logo";
 
 export const metadata = {
-  title: "Help Center — StudyCafe",
-  description: "Browse our knowledge base for articles and tutorials on using StudyCafe.",
+  title: "Help Center — Proactive",
+  description: "Browse our knowledge base for articles and tutorials on using Proactive.",
 };
 
 const categories = [
@@ -51,9 +51,9 @@ export default function HelpPage() {
               <div className="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none text-muted-foreground">
                 <Search className="h-5 w-5" />
               </div>
-              <input 
-                type="text" 
-                placeholder="Search articles" 
+              <input
+                type="text"
+                placeholder="Search articles"
                 className="w-full rounded-md border-0 bg-background py-4 pl-12 pr-4 text-foreground shadow-sm focus:ring-2 focus:ring-accent-blue sm:text-lg"
               />
               <button className="absolute inset-y-2 right-2 flex items-center gap-2 rounded bg-surface px-4 text-sm font-medium text-foreground shadow-sm hover:bg-surface-strong">
@@ -64,7 +64,7 @@ export default function HelpPage() {
               <ol className="flex items-center gap-2">
                 <li><a href="/help" className="hover:text-white">Knowledge Base</a></li>
                 <ChevronRight className="h-4 w-4" />
-                <li className="font-medium text-white">StudyCafe</li>
+                <li className="font-medium text-white">Proactive</li>
               </ol>
             </nav>
           </div>
@@ -97,7 +97,7 @@ export default function HelpPage() {
             {/* Branding Block */}
             <div className="space-y-4">
               <Logo className="text-xl" />
-              <p className="text-sm text-muted-foreground">StudyCafe help center</p>
+              <p className="text-sm text-muted-foreground">Proactive help center</p>
               <button className="rounded border border-border bg-surface px-4 py-1.5 text-sm font-medium text-foreground hover:bg-surface-strong">
                 Follow
               </button>
@@ -136,7 +136,7 @@ export default function HelpPage() {
           </aside>
         </div>
       </section>
-      
+
       <FinalCTA />
     </SiteShell>
   );

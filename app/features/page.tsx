@@ -34,7 +34,7 @@ const panels: Panel[] = [
     ],
   },
   {
-    icon: ListChecks, title: "StudyCafenagement", img: tasksImg,
+    icon: ListChecks, title: "Proactivenagement", img: tasksImg,
     summary: "Create, assign, automate. The lifecycle every task in your firm should follow.",
     groups: [
       { heading: "Create", items: ["47+ filing templates ready to use", "Custom checklists per service line", "Recurring schedules in one click"] },
@@ -96,7 +96,7 @@ export default function FeaturesPage() {
             Six interlocking modules cover the full lifecycle of a modern accounting practice — without the integration tax of stitching ten tools together.
           </p>
           <div className="mt-8 flex flex-wrap justify-center gap-3">
-            <a href="#trial" className="rounded-full bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground shadow-elegant">Start Free Trial</a>
+            <a href="/signup" className="rounded-full bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground shadow-elegant">Get started</a>
             <a href="/pricing" className="rounded-full border border-foreground/15 bg-surface px-6 py-3 text-sm font-semibold text-foreground">View Pricing</a>
           </div>
         </div>
