@@ -26,6 +26,13 @@ export const authApi = createApi({
       }),
       transformResponse: (response: { data: any }) => response.data,
     }),
+    getPricingTiers: builder.query({
+      query: () => ({
+        url: '/auth/pricing-tiers',
+        method: 'GET',
+      }),
+      transformResponse: (response: { data: any[] }) => response.data,
+    }),
     register: builder.mutation({
       query: (payload) => ({
         url: '/auth/register',
@@ -63,6 +70,7 @@ export const authApi = createApi({
 
 export const {
   useCalculatePriceQuery,
+  useGetPricingTiersQuery,
   useRegisterMutation,
   useVerifyPaymentMutation,
   useSendOtpMutation,

@@ -39,6 +39,7 @@ export default function SignupPage() {
   const [isOtpSent, setIsOtpSent] = useState(false);
   const [isEmailVerified, setIsEmailVerified] = useState(false);
   const [resendTimer, setResendTimer] = useState(0);
+  const [transactionStatus, setTransactionStatus] = useState<'idle' | 'loading_script' | 'paying' | 'verifying' | 'success'>('idle');
 
   useEffect(() => {
     let interval: NodeJS.Timeout;
@@ -56,7 +57,6 @@ export default function SignupPage() {
   const [verifyOtpApi, { isLoading: isVerifyingOtp }] = useVerifyOtpMutation();
 
   const handleSendOtp = async () => {
-    
     if (!isEmailValid) return;
     try {
       setApiError("");
@@ -65,7 +65,11 @@ export default function SignupPage() {
       setIsOtpSent(true);
       setResendTimer(30);
     } catch (err: any) {
-      setApiError(err?.data?.error?.message || err?.message || "Failed to send OTP.");
+      if (err?.status === 409 && err?.data?.error?.code === 'USER_EXISTS') {
+        setApiError("USER_EXISTS");
+      } else {
+        setApiError(err?.data?.error?.message || err?.message || "Failed to send OTP.");
+      }
     }
   };
 
@@ -73,7 +77,8 @@ export default function SignupPage() {
     if (otp.length < 4) return;
     try {
       setApiError("");
-      await verifyOtpApi({ email, otp }).unwrap();
+      const datat = await verifyOtpApi({ email, otp }).unwrap();
+      console.log("Verify OTP response:", datat);
       setIsEmailVerified(true);
     } catch (err: any) {
       setApiError(err?.data?.error?.message || err?.message || "Invalid OTP.");
@@ -104,8 +109,6 @@ export default function SignupPage() {
 
   const { data: pricingDataResponse, isError, error } = useCalculatePriceQuery({ users: debouncedUsers, promoCode: appliedPromoCode });
 
-  console.log("pricingDataResponse",pricingDataResponse)
-
   const pricingData = pricingDataResponse || {
     baseAmount: 0,
     discountPercentage: 0,
@@ -113,10 +116,11 @@ export default function SignupPage() {
     subTotal: 0,
     gstAmount: 0,
     grandTotal: 0,
-    pricePerUserYearly: 0
+    pricePerUserYearly: 0,
+    pricePerUserMonthly: 0
   };
 
-  const pricePerUserMonthly = pricingData.pricePerUserYearly > 0 ? pricingData.pricePerUserYearly / 12 : 0;
+  const pricePerUserMonthly = pricingData.pricePerUserMonthly;
 
   const [verifyPayment, { isLoading: isVerifying }] = useVerifyPaymentMutation();
   const [register, { isLoading: isRegistering }] = useRegisterMutation();
@@ -124,12 +128,16 @@ export default function SignupPage() {
   const handleVerificationSuccess = (data: any) => {
     localStorage.setItem('accessToken', data.accessToken);
     localStorage.setItem('refreshToken', data.refreshToken);
-    alert('Payment Successful! Welcome to Proactive.');
-    router.push('/dashboard');
+    setTransactionStatus('success');
+    setTimeout(() => {
+      const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:8080';
+      window.location.href = `${appUrl}/`;
+    }, 1500);
   };
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setTransactionStatus('loading_script');
     const username = email.split('@')[0];
     
     try {
@@ -149,6 +157,7 @@ export default function SignupPage() {
       const resScript = await loadRazorpay();
       if (!resScript) {
         alert("Razorpay SDK failed to load. Are you online?");
+        setTransactionStatus('idle');
         return;
       }
 
@@ -160,6 +169,7 @@ export default function SignupPage() {
         description: `Subscription for ${users} users`,
         order_id: orderId,
         handler: async function (response: any) {
+          setTransactionStatus('verifying');
           try {
             const verificationData = await verifyPayment({
               razorpay_order_id: response.razorpay_order_id,
@@ -177,6 +187,12 @@ export default function SignupPage() {
           } catch (err: any) {
             console.error(err);
             alert(err.message || 'Something went wrong during verification');
+            setTransactionStatus('idle');
+          }
+        },
+        modal: {
+          ondismiss: function() {
+            setTransactionStatus('idle');
           }
         },
         prefill: {
@@ -190,10 +206,12 @@ export default function SignupPage() {
       };
 
       const paymentObject = new (window as any).Razorpay(options);
+      setTransactionStatus('paying');
       paymentObject.open();
 
     } catch (err: any) {
       console.error("Registration error:", err);
+      setTransactionStatus('idle');
       
       // Handle RTK Query fetchBaseQuery structured errors
       if (err?.status === 409 && err?.data?.error?.code === 'USER_EXISTS') {
@@ -280,175 +298,212 @@ export default function SignupPage() {
 
         {/* Right: Form */}
         <div className="bg-surface p-6 sm:p-6 lg:py-6 lg:px-16 flex flex-col overflow-y-auto">
-          <div className="flex flex-col items-center text-center mb-6">
-            <Logo />
-            <h1 className="mt-6 font-display text-2xl font-bold text-foreground">Create your account</h1>
-            <p className="mt-2 text-sm text-muted-foreground">Enter your details to get started with Proactive.</p>
-          </div>
+          {(transactionStatus === 'idle' || transactionStatus === 'loading_script') && (
+            <div className="flex flex-col items-center text-center mb-6">
+              <Logo />
+              <h1 className="mt-6 font-display text-2xl font-bold text-foreground">Create your account</h1>
+              <p className="mt-2 text-sm text-muted-foreground">Enter your details to get started with Proactive.</p>
+            </div>
+          )}
 
-          <form onSubmit={onSubmit} className="mt-6 space-y-4">
-            <div className="grid grid-cols-2 gap-4">
+          {apiError && apiError !== "USER_EXISTS" && (transactionStatus === 'idle' || transactionStatus === 'loading_script') && (
+            <div className="mb-6 rounded-xl bg-red-50/50 border border-red-100 p-4 text-sm text-red-600">
+              {apiError}
+            </div>
+          )}
+
+          {(transactionStatus === 'idle' || transactionStatus === 'loading_script') && (
+            <form onSubmit={onSubmit} className="mt-6 space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-muted-foreground/70">
+                    <User size={18} />
+                  </div>
+                  <input
+                    id="firstName"
+                    type="text"
+                    value={firstName}
+                    onChange={(e) => setFirstName(e.target.value)}
+                    placeholder="Full Name"
+                    required
+                    className="w-full bg-surface border border-border focus:border-primary rounded-full outline-none py-3 pl-11 pr-4 text-sm text-foreground placeholder-muted-foreground/70 transition-colors"
+                  />
+                </div>
+
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-muted-foreground/70">
+                    <Phone size={18} />
+                    <span className="ml-1 text-sm">+91</span>
+                  </div>
+                  <input
+                    id="phoneNumber"
+                    type="tel"
+                    value={phoneNumber}
+                    onChange={(e) => setPhoneNumber(e.target.value.replace(/\D/g, '').slice(0, 10))}
+                    placeholder="Phone Number"
+                    required
+                    className="w-full bg-surface border border-border focus:border-primary rounded-full outline-none py-3 pl-18 pr-4 text-sm text-foreground placeholder-muted-foreground/70 transition-colors"
+                  />
+                </div>
+              </div>
+
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-muted-foreground/70">
-                  <User size={18} />
+                  <Building2 size={18} />
                 </div>
                 <input
-                  id="firstName"
+                  id="firmName"
                   type="text"
-                  value={firstName}
-                  onChange={(e) => setFirstName(e.target.value)}
-                  placeholder="Full Name"
+                  value={firmName}
+                  onChange={(e) => setFirmName(e.target.value)}
+                  placeholder="Firm Name"
                   required
                   className="w-full bg-surface border border-border focus:border-primary rounded-full outline-none py-3 pl-11 pr-4 text-sm text-foreground placeholder-muted-foreground/70 transition-colors"
                 />
               </div>
 
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-muted-foreground/70">
-                  <Phone size={18} />
-                  <span className="ml-1 text-sm">+91</span>
-                </div>
-                <input
-                  id="phoneNumber"
-                  type="tel"
-                  value={phoneNumber}
-                  onChange={(e) => setPhoneNumber(e.target.value.replace(/\D/g, '').slice(0, 10))}
-                  placeholder="Phone Number"
-                  required
-                  className="w-full bg-surface border border-border focus:border-primary rounded-full outline-none py-3 pl-[4.5rem] pr-4 text-sm text-foreground placeholder-muted-foreground/70 transition-colors"
-                />
-              </div>
-            </div>
-
-            <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-muted-foreground/70">
-                <Building2 size={18} />
-              </div>
-              <input
-                id="firmName"
-                type="text"
-                value={firmName}
-                onChange={(e) => setFirmName(e.target.value)}
-                placeholder="Firm Name"
-                required
-                className="w-full bg-surface border border-border focus:border-primary rounded-full outline-none py-3 pl-11 pr-4 text-sm text-foreground placeholder-muted-foreground/70 transition-colors"
-              />
-            </div>
-
-            <div className="flex flex-col">
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-muted-foreground/70">
-                  <Mail size={18} />
-                </div>
-                <input
-                  id="email"
-                  type="email"
-                  value={email}
-                  onChange={(e) => { setEmail(e.target.value); setIsOtpSent(false); setIsEmailVerified(false); }}
-                  disabled={isEmailVerified}
-                  placeholder="Email id"
-                  required
-                  className={`w-full bg-surface border ${apiError === "USER_EXISTS" ? "border-red-500" : "border-border"} focus:border-primary rounded-full outline-none py-3 pl-11 pr-[100px] text-sm text-foreground placeholder-muted-foreground/70 transition-colors ${isEmailVerified ? "opacity-70 bg-surface-strong" : ""}`}
-                />
-                {!isEmailVerified && (
-                  <button
-                    type="button"
-                    onClick={handleSendOtp}
-                    disabled={!isEmailValid || isSendingOtp || resendTimer > 0}
-                    className="absolute cursor-pointer right-1.5 top-1.5 bottom-1.5 px-4 bg-primary text-primary-foreground text-xs font-semibold rounded-full hover:bg-primary-deep transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    {isSendingOtp ? "Sending..." : resendTimer > 0 ? `Resend in ${resendTimer}s` : isOtpSent ? "Resend OTP" : "Send OTP"}
-                  </button>
-                )}
-                {isEmailVerified && (
-                  <div className="absolute right-4 top-1/2 -translate-y-1/2 text-green-600 font-semibold text-xs flex items-center gap-1">
-                    <CheckCircle2 size={16} /> Verified
+              <div className="flex flex-col">
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-muted-foreground/70">
+                    <Mail size={18} />
                   </div>
-                )}
-                {
-                  apiError === "USER_EXISTS" && (
-                    <span className="absolute -bottom-5 left-4 text-red-500 text-xs">User already exists. Please login instead.</span>
-                  )
-                }
-              </div>
-
-              <AnimatePresence>
-                {isOtpSent && !isEmailVerified && (
-                  <motion.div 
-                    initial={{ opacity: 0, height: 0, marginTop: 0 }}
-                    animate={{ opacity: 1, height: "auto", marginTop: 16 }}
-                    exit={{ opacity: 0, height: 0, marginTop: 0 }}
-                    transition={{ duration: 0.2, ease: "easeInOut" }}
-                    className="relative overflow-hidden"
-                  >
-                    <input
-                      type="text"
-                      value={otp}
-                      onChange={(e) => setOtp(e.target.value.replace(/\D/g, '').slice(0, 6))}
-                      placeholder="Enter 6-digit OTP"
-                      className="w-full bg-surface border border-border focus:border-primary rounded-full outline-none py-3 pl-5 pr-[100px] text-sm text-foreground placeholder-muted-foreground/70 transition-colors"
-                    />
+                  <input
+                    id="email"
+                    type="email"
+                    value={email}
+                    onChange={(e) => { setEmail(e.target.value); setIsOtpSent(false); setIsEmailVerified(false); }}
+                    disabled={isEmailVerified}
+                    placeholder="Email id"
+                    required
+                    className={`w-full bg-surface border ${apiError === "USER_EXISTS" ? "border-red-500" : "border-border"} focus:border-primary rounded-full outline-none py-3 pl-11 pr-25 text-sm text-foreground placeholder-muted-foreground/70 transition-colors ${isEmailVerified ? "opacity-70 bg-surface-strong" : ""}`}
+                  />
+                  {!isEmailVerified && (
                     <button
                       type="button"
-                      onClick={handleVerifyOtp}
-                      disabled={otp.length < 4 || isVerifyingOtp}
-                      className="absolute right-1.5 top-1.5 bottom-1.5 px-4 bg-primary text-white cursor-pointer text-xs font-semibold rounded-full hover:brightness-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                      onClick={handleSendOtp}
+                      disabled={!isEmailValid || isSendingOtp || resendTimer > 0}
+                      className="absolute cursor-pointer right-1.5 top-1.5 bottom-1.5 px-4 bg-primary text-primary-foreground text-xs font-semibold rounded-full hover:bg-primary-deep transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                      {isVerifyingOtp ? "Verifying..." : "Verify"}
+                      {isSendingOtp ? "Sending..." : resendTimer > 0 ? `Resend in ${resendTimer}s` : isOtpSent ? "Resend OTP" : "Send OTP"}
                     </button>
+                  )}
+                  {isEmailVerified && (
+                    <div className="absolute right-4 top-1/2 -translate-y-1/2 text-green-600 font-semibold text-xs flex items-center gap-1">
+                      <CheckCircle2 size={16} /> Verified
+                    </div>
+                  )}
+                  {
+                    apiError === "USER_EXISTS" && (
+                      <span className="absolute -bottom-5 left-4 text-red-500 text-xs">User already exists. Please login instead.</span>
+                    )
+                  }
+                </div>
+
+                <AnimatePresence>
+                  {isOtpSent && !isEmailVerified && (
+                    <motion.div 
+                      initial={{ opacity: 0, height: 0, marginTop: 0 }}
+                      animate={{ opacity: 1, height: "auto", marginTop: 16 }}
+                      exit={{ opacity: 0, height: 0, marginTop: 0 }}
+                      transition={{ duration: 0.2, ease: "easeInOut" }}
+                      className="relative overflow-hidden"
+                    >
+                      <input
+                        type="text"
+                        value={otp}
+                        onChange={(e) => setOtp(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                        placeholder="Enter 6-digit OTP"
+                        className="w-full bg-surface border border-border focus:border-primary rounded-full outline-none py-3 pl-5 pr-25 text-sm text-foreground placeholder-muted-foreground/70 transition-colors"
+                      />
+                      <button
+                        type="button"
+                        onClick={handleVerifyOtp}
+                        disabled={otp.length < 4 || isVerifyingOtp}
+                        className="absolute right-1.5 top-1.5 bottom-1.5 px-4 bg-primary text-white cursor-pointer text-xs font-semibold rounded-full hover:brightness-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        {isVerifyingOtp ? "Verifying..." : "Verify"}
+                      </button>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-muted-foreground/70">
+                  <Lock size={18} />
+                </div>
+                <input
+                  id="password"
+                  type={showPw ? "text" : "password"}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  onFocus={() => setPwFocused(true)}
+                  onBlur={() => setPwFocused(false)}
+                  placeholder="Password"
+                  required
+                  className="w-full bg-surface border border-border focus:border-primary rounded-full outline-none py-3 pl-11 pr-12 text-sm text-foreground placeholder-muted-foreground/70 transition-colors"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPw((v) => !v)}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground/70 hover:text-foreground z-10 transition-colors"
+                  aria-label="Toggle password visibility"
+                >
+                  {showPw ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
+              </div>
+
+              <div className="pt-4">
+                <button
+                  type="submit"
+                  disabled={isPending || !isEmailVerified || transactionStatus === 'loading_script'}
+                  className="w-full cursor-pointer bg-primary text-primary-foreground rounded-full py-3 font-medium hover:bg-primary-deep transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {transactionStatus === 'loading_script' ? "Loading Secure Gateway..." : "Proceed to Pay"}
+                </button>
+              </div>
+              
+              <p className="text-center text-xs text-muted-foreground/80 mt-4">
+                By signing up, you agree to our <a href="/terms" target="_blank" className="underline hover:text-foreground">Terms of Service</a> and <a href="/privacy" target="_blank" className="underline hover:text-foreground">Privacy Policy</a>.
+              </p>
+            </form>
+          )}
+
+          {transactionStatus !== 'idle' && transactionStatus !== 'loading_script' && (
+            <div className="flex-1 flex flex-col items-center justify-center py-20 px-6 text-center">
+              <AnimatePresence mode="wait">
+                {transactionStatus === 'success' ? (
+                  <motion.div
+                    key="success"
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.8 }}
+                    className="flex flex-col items-center text-green-600"
+                  >
+                    <CheckCircle2 size={80} className="mb-4" />
+                    <h3 className="text-2xl font-bold text-foreground">Payment Successful!</h3>
+                    <p className="text-muted-foreground mt-2">Setting up your workspace...</p>
+                  </motion.div>
+                ) : (
+                  <motion.div
+                    key="processing"
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    className="flex flex-col items-center"
+                  >
+                    <div className="w-16 h-16 border-4 border-primary/20 border-t-primary rounded-full animate-spin mb-6" />
+                    <h3 className="text-xl font-bold text-foreground mb-2">Securely processing your payment...</h3>
+                    <p className="text-muted-foreground">Please do not close this window.</p>
                   </motion.div>
                 )}
               </AnimatePresence>
             </div>
-            
-            {/* Show any OTP-specific errors right below the group if they exist */}
-            {apiError && apiError !== "USER_EXISTS" && (
-              <div className="text-red-500 text-xs mt-1 ml-4">{apiError}</div>
-            )}
-
-            <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-muted-foreground/70">
-                <Lock size={18} />
-              </div>
-              <input
-                id="password"
-                type={showPw ? "text" : "password"}
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                onFocus={() => setPwFocused(true)}
-                onBlur={() => setPwFocused(false)}
-                placeholder="Password"
-                required
-                className="w-full bg-surface border border-border focus:border-primary rounded-full outline-none py-3 pl-11 pr-12 text-sm text-foreground placeholder-muted-foreground/70 transition-colors"
-              />
-              <button
-                type="button"
-                onClick={() => setShowPw((v) => !v)}
-                className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground/70 hover:text-foreground z-10 transition-colors"
-                aria-label="Toggle password visibility"
-              >
-                {showPw ? <EyeOff size={18} /> : <Eye size={18} />}
-              </button>
-            </div>
-
-            <div className="pt-4">
-              <button
-                type="submit"
-                disabled={isPending || !isEmailVerified}
-                className="w-full cursor-pointer bg-primary text-primary-foreground rounded-full py-3 font-medium hover:bg-primary-deep transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {isPending ? "Processing..." : "Proceed to Pay"}
-              </button>
-            </div>
-            
-            <p className="text-center text-xs text-muted-foreground/80 mt-4">
-              By signing up, you agree to our <a href="/terms" target="_blank" className="underline hover:text-foreground">Terms of Service</a> and <a href="/privacy" target="_blank" className="underline hover:text-foreground">Privacy Policy</a>.
-            </p>
-          </form>
+          )}
 
           <p className="text-xs text-center text-muted-foreground mt-6 pb-4">
             Already have an account?{" "}
-            <Link href="http://localhost:8080/login" className="text-primary hover:text-primary-deep font-medium">
+            <Link href={`${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:8080'}/login`} className="text-primary hover:text-primary-deep font-medium">
               Sign In
             </Link>
           </p>

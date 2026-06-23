@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { useRouter } from "next/navigation";
 import { setUsersCount } from "@/lib/features/pricing/pricingSlice";
@@ -8,8 +8,9 @@ import { Check, Minus, ChevronDown, Quote } from "lucide-react";
 import { SiteShell } from "@/components/site/SiteShell";
 import { FinalCTA } from "@/components/site/FinalCTA";
 import { Reveal } from "@/components/site/Reveal";
+import { useGetPricingTiersQuery, useCalculatePriceQuery } from "@/lib/services/authApi";
 
-const tiers = [
+const staticTiersData = [
   {
     name: "1-5 Users", price: 99, blurb: "For solo practitioners getting organised.",
     perks: ["Up to 5 team members", "Unlimited clients", "Task & calendar management", "Basic billing & invoices", "WhatsApp & email channel"],
@@ -58,6 +59,18 @@ const faqs = [
 ];
 
 export default function PricingPage() {
+
+  const { data: pricingDataResponse, isLoading } = useGetPricingTiersQuery(undefined);
+  const backendTiers = Array.isArray(pricingDataResponse) ? pricingDataResponse : [];
+
+  const mergedTiers = staticTiersData.map((t, idx) => {
+    const backendTier = backendTiers[idx];
+    return {
+      ...t,
+      name: backendTier?.name || t.name,
+      price: backendTier?.pricePerUserMonthly || t.price,
+    };
+  });
   const [users, setUsers] = useState(10);
   const dispatch = useDispatch();
   const router = useRouter();
@@ -67,14 +80,24 @@ export default function PricingPage() {
     router.push("/signup");
   };
 
-  let pricePerUser = 99;
-  if (users >= 6 && users <= 10) pricePerUser = 91;
-  else if (users >= 11 && users <= 30) pricePerUser = 83;
-  else if (users >= 31) pricePerUser = 75;
+  const [debouncedUsers, setDebouncedUsers] = useState(users);
 
-  const monthly = users * pricePerUser;
-  const annualPerUser = pricePerUser * 12;
-  const totalAnnual = monthly * 12;
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedUsers(users);
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [users]);
+
+  const { data: calculatePriceResponse } = useCalculatePriceQuery({ users: debouncedUsers });
+  const pricingData = calculatePriceResponse || {
+    baseAmount: 0,
+    pricePerUserYearly: 0,
+    grandTotal: 0
+  };
+
+  const pricePerUser = pricingData.pricePerUserMonthly || 99;
+  const totalAnnual = pricingData.baseAmount || users * (pricePerUser * 12);
 
   const [openFaq, setOpenFaq] = useState<number | null>(0);
 
@@ -99,7 +122,9 @@ export default function PricingPage() {
       {/* Tiers */}
       <section className="container-page pb-16">
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-          {tiers.map((t, idx) => (
+          {isLoading ? (
+            <div className="col-span-full py-12 text-center text-muted-foreground">Loading pricing...</div>
+          ) : mergedTiers.map((t, idx) => (
             <Reveal
               key={t.name}
               delay={idx * 100}
@@ -129,8 +154,14 @@ export default function PricingPage() {
                 ))}
               </ul>
               <button
-                onClick={() => handleBuy(t.defaultUsers)}
-                className={`mt-auto w-full rounded-full px-5 py-3 text-center text-sm font-semibold transition ${t.featured
+                onClick={() => {
+                  if (t.cta === "Talk to Sales") {
+                    router.push("/contact");
+                  } else {
+                    handleBuy(t.defaultUsers);
+                  }
+                }}
+                className={`mt-auto w-full cursor-pointer rounded-full px-5 py-3 text-center text-sm font-semibold transition ${t.featured
                   ? "bg-accent-blue text-primary-deep hover:brightness-95"
                   : "bg-primary text-primary-foreground hover:bg-primary-deep"
                   }`}
@@ -173,10 +204,10 @@ export default function PricingPage() {
                   <div className="text-xs uppercase tracking-wider text-muted-foreground">Team size</div>
                   <div className="font-display text-4xl font-bold text-foreground">{users}</div>
                 </div>
-                <div>
+                {/* <div>
                   <div className="text-xs uppercase tracking-wider text-muted-foreground">Yearly/User</div>
                   <div className="font-display text-3xl font-bold text-primary">₹{annualPerUser.toLocaleString()}</div>
-                </div>
+                </div> */}
                 <div>
                   <div className="text-xs uppercase tracking-wider text-muted-foreground">Annual Total</div>
                   <div className="font-display text-3xl font-bold text-foreground">₹{totalAnnual.toLocaleString()}</div>
@@ -208,7 +239,7 @@ export default function PricingPage() {
                 <div className="mt-8 flex justify-end">
                   <button
                     onClick={() => handleBuy(users)}
-                    className="inline-flex rounded-full bg-primary px-8 py-3.5 text-sm font-semibold text-primary-foreground shadow-sm transition hover:bg-primary-deep"
+                    className="inline-flex cursor-pointer rounded-full bg-primary px-8 py-3.5 text-sm font-semibold text-primary-foreground shadow-sm transition hover:bg-primary-deep"
                   >
                     Buy Now
                   </button>
@@ -229,7 +260,7 @@ export default function PricingPage() {
             <thead className="sticky top-0 bg-surface-strong">
               <tr>
                 <th className="p-4 font-display text-sm font-semibold text-foreground">Feature</th>
-                {tiers.map((t) => (
+                {mergedTiers.map((t) => (
                   <th key={t.name} className="p-4 font-display text-sm font-semibold text-foreground">
                     {t.name}
                   </th>
@@ -287,7 +318,7 @@ export default function PricingPage() {
               <Reveal key={f.q} delay={i * 60}>
                 <button
                   onClick={() => setOpenFaq(isOpen ? null : i)}
-                  className="flex w-full items-center justify-between gap-4 p-6 text-left transition hover:bg-surface-strong"
+                  className="flex cursor-pointer w-full items-center justify-between gap-4 p-6 text-left transition hover:bg-surface-strong"
                 >
                   <span className="font-display text-base font-semibold text-foreground">{f.q}</span>
                   <ChevronDown className={`h-5 w-5 shrink-0 text-primary transition-transform ${isOpen ? "rotate-180" : ""}`} />
